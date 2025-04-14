@@ -2,6 +2,7 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        new Table();
+        Components components = new Components();
+        new Table(components);
     }
 }

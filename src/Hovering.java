@@ -9,8 +9,10 @@ public class Hovering implements MouseListener {
     private PanelForButtons panel;
     private String selection = "";
     Table table;
-    public Hovering(String section, PanelForButtons panel, Table table) {
+    Components components;
+    public Hovering(String section, PanelForButtons panel, Table table, Components components) {
         this.panel = panel;
+        this.components = components;
         this.table = table;
         this.selection = section;
         chooseRightImg(section);
@@ -57,7 +59,7 @@ public class Hovering implements MouseListener {
                         break;
                         case "roulette":
                         table.dispose();
-                        new Roulette();
+                        new Roulette(components);
                         break;
         }
     }
