@@ -1,13 +1,33 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class Components {
+    public void doredandblack(JButton red, JButton black, JPanel betpanel, Roulette roulette) {
+        red.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                betpanel.setVisible(true);
+                roulette.colorchoose = true;
+                roulette.isblackie = false; // red selected
+            }
+        });
+        black.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                betpanel.setVisible(true);
+                roulette.colorchoose = true;
+                roulette.isblackie = true; // black selected
+            }
+        });
+    }
+
     public void addnumbers(int[] numbers) {
         numbers[0] = 0;
         numbers[1] = 26;
@@ -47,6 +67,61 @@ public class Components {
         numbers[35] = 15;
         numbers[36] = 32;
     }
+    public void setupblackredmap(HashMap<Integer, Boolean> map) {
+        // Black = true, Red = false
+        int[] blackNumbers = {
+                2, 4, 6, 8, 10, 11, 13, 15,
+                17, 20, 22, 24, 26, 28, 29, 31, 33, 35
+        };
+
+        int[] redNumbers = {
+                1, 3, 5, 7, 9, 12, 14, 16,
+                18, 19, 21, 23, 25, 27, 30, 32, 34, 36
+        };
+
+        for (int num : blackNumbers) {
+            map.put(num, true); // black = true
+        }
+
+        for (int num : redNumbers) {
+            map.put(num, false); // red = false
+        }
+
+        // 0 is green; you can leave it unassigned or handle it explicitly
+    }
+
+    public void souter(int money, int blackbet){
+        System.out.println("proslo");
+        System.out.println(blackbet + " blackbetik");
+    }
+    public void souter1(int money, int redbet){
+        System.out.println("proslo1");
+        System.out.println(redbet + "redbetik");
+    }
+    public int blackandredmoneymaker(int blackbet, int redbet, HashMap<Integer, Boolean> map, int winningnumber, int currentMoney, JPanel panel, Roulette roulette) {
+        if (roulette.isblackie) {
+            System.out.println("cerna prosla");
+            // Black bet logic
+            if (map.get(winningnumber)) {
+                // Black number
+                System.out.println("BLACKBETIK  " + blackbet);
+                return currentMoney + blackbet * 2; // win the black bet
+            } else {
+                // Not black, loss
+                return currentMoney; // loss
+            }
+        } else {
+            // Red bet logic
+            if (!map.get(winningnumber)) {
+                // Red number
+                return currentMoney + redbet * 2; // win the red bet
+            } else {
+                // Not red, loss
+                return currentMoney; // loss
+            }
+        }
+    }
+
 
     public void addbuttons(JPanel panel, HashMap buttons, Roulette roulette) {
 
@@ -62,11 +137,23 @@ public class Components {
         panel.add(zero);
         buttons.put(zero, 0);
         JButton red = new JButton("");
+        ImageIcon icone = new ImageIcon("src/Images/Roulette/RouletteButtons/button_red.png");
+        red.setIcon(icone);
         red.setOpaque(false);
         red.setContentAreaFilled(false);
         red.setBorderPainted(false);
         red.setFocusPainted(false);
-        red.setBounds(105, 770, 315, 110);
+        red.setBounds(105, 770, 157, 70);
+        panel.add(red);
+        JButton black = new JButton("");
+        ImageIcon iconka = new ImageIcon("src/Images/Roulette/RouletteButtons/button_black.png");
+        black.setIcon(iconka);
+        black.setOpaque(false);
+        black.setContentAreaFilled(false);
+        black.setBorderPainted(false);
+        black.setFocusPainted(false);
+        black.setBounds(263, 770, 157, 70);
+        panel.add(black);
         File folder = new File("src/Images/Roulette/RouletteButtons");
         File[] imageFiles = folder.listFiles((dir, name) -> name.matches("button_\\d+\\.png"));
 
@@ -100,7 +187,7 @@ public class Components {
                 button.setFocusable(false);
                 button.addActionListener(new NumbersListener(roulette));
                 panel.add(button);
-                buttons.put(button, i);
+                buttons.put(button, i+1);
                 x++;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -109,6 +196,7 @@ public class Components {
 
         panel.revalidate();
         panel.repaint();
+        doredandblack(red, black, roulette.betpanel,roulette);
     }
 
     private int extractNumber(String filename) {

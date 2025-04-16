@@ -14,20 +14,25 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class Roulette extends JFrame {
+    public boolean colorchoose = false;
+    public boolean isblackie = false;
+    public int redbet = 0;
+    public int blackbet = 0;
+    public int selectedNumber = -1; // store which number was clicked
+    public HashMap<Integer, Boolean> isblack = new HashMap<>();
+    public boolean black = false;
     private BufferedImage image;
     private BufferedImage arrow;
     private double angle = 0;
     private Random rd = new Random();
     private Timer timer;
-    public Boolean betted = false;
-    public int bettednum = 0;
     public HashMap<Integer, Integer> bets = new HashMap<>();
     private JLabel winnerLabel = new JLabel("W I N N E R: ");
     private JButton spinButton = new JButton("Spin");
     private int[] numbers = new int[37];
     private JPanel panel = new JPanel();
     public JPanel betpanel; // Updated betpanel declaration
-    public int bet = 100;
+    public int bet = 0;
     JLabel betlabel = new JLabel(String.valueOf(bet));
     public int money = 1000;
     JLabel moneylabel = new JLabel("money: " + money);
@@ -93,29 +98,43 @@ public class Roulette extends JFrame {
                 int count = rd.nextInt(10);
                 if (count == 3) {
                     timer.stop();
+                    // Choose winning number
                     System.out.println("number: " + numbers[counter]);
-                    rewritelabel(numbers[counter]);
+                    rewritelabel(numbers[counter]);  // Update the winner label
+                    System.out.println("redbet test1: " + redbet);
+                    money = components.blackandredmoneymaker(blackbet, redbet, isblack, numbers[counter], money, panel, Roulette.this);
+                    System.out.println(money + " <- penizky");
+                    moneylabel.setText("money: " + money);
+
+                    // In your Timer action listener
+                    if (bets.containsKey(numbers[counter])) {
+                        // Add the winnings for the winning number
+                        money += bets.get(numbers[counter]) * 10;  // 10x payout for this bet
+                        moneylabel.setText("money: " + money);
+                    }
+
+// Clear bets after payout
+                    bets.clear();
+
                 }
             }
             panel.repaint();
         });
 
+
         spinButton.addActionListener(e -> {
             angle = 0;
             timer.start();
+
         });
 
         this.setVisible(true);
         setupbetpanel();
+        components.setupblackredmap(isblack);
     }
 
     public void rewritelabel(int counter) {
         winnerLabel.setText("W I N N E R: " + counter);
-        if (bets.containsKey(counter)) {
-            int sum = bets.get(counter);
-            money += sum * 2;
-            moneylabel.setText("money: " + money);
-        }
     }
 
     public void setupbetpanel() {
@@ -147,19 +166,56 @@ public class Roulette extends JFrame {
             }
         });
         bett.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                betted = true;
-                bettednum = bet;
-                money -= bet;
-                bet = 0;
-                betlabel.setText(String.valueOf(bet));
-                betpanel.setVisible(false);
-                panel.repaint();
-                moneylabel.setText("money: " + money);
+                if (!colorchoose) {
+                    if (selectedNumber != -1 && bet > 0) {
+                        // Deduct the money first
+                        money -= bet;  // Subtract bet from money
+
+                        // Store the bet
+                        bets.put(selectedNumber, bet);
+                        System.out.println("Storing bet: Number = " + selectedNumber + ", Bet = " + bet);
+
+                        moneylabel.setText("money: " + money);
+
+                        selectedNumber = -1; // reset the selected number
+                        bet = 0;
+                        betlabel.setText("0");
+
+                        betpanel.setVisible(false);
+
+                        System.out.println("Current bets:");
+                        bets.forEach((num, b) -> System.out.println("Number: " + num + " | Bet: " + b));
+                    }
+
+                } else {
+                    System.out.println("proslo vybyrani berev");
+                    if (isblackie) {
+                        System.out.println("prosla cerna");
+                        blackbet = bet;
+                        System.out.println(blackbet + " black bet");
+                    } else {
+                        System.out.println("prosla cervena");
+                        redbet = bet;
+                        System.out.println(redbet + " red bet");
+                    }
+
+                    // Deduct the money for the color bet
+                    money -= bet;
+                    bet = 0;
+                    betlabel.setText("0");
+                    moneylabel.setText("money: " + money);
+
+                    betpanel.setVisible(false);
+                    panel.repaint();
+                    colorchoose = false;
+                }
             }
         });
+
+
+
         lessbutton.addActionListener(new ActionListener() {
 
             @Override
