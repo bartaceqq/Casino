@@ -152,6 +152,8 @@ public class Roulette extends JFrame {
                         money += bets.get(numbers[counter]) * 10;  // 10x payout for this bet
                         moneylabel.setText("money: " + money);
                     }
+                    redbet =0;
+                    blackbet = 0;
                     bets.clear();
 
                 }
