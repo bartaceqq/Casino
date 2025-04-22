@@ -7,55 +7,83 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.rmi.MarshalledObject;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
 public class Roulette extends JFrame {
+    //things for colors
+    public HashMap<Integer, Boolean> isblack = new HashMap<>();
+    //
+    //choose red things
+    public int redbet = 0;
+    //
+    //choose black things
     public boolean colorchoose = false;
     public boolean isblackie = false;
-    public int redbet = 0;
     public int blackbet = 0;
-    public int selectedNumber = -1; // store which number was clicked
-    public HashMap<Integer, Boolean> isblack = new HashMap<>();
-    public boolean black = false;
+    //
+    //images
     private BufferedImage image;
     private BufferedImage arrow;
+    //
+    //spinning
     private double angle = 0;
-    private Random rd = new Random();
-    private Timer timer;
-    public HashMap<Integer, Integer> bets = new HashMap<>();
-    private JLabel winnerLabel = new JLabel("W I N N E R: ");
     private JButton spinButton = new JButton("Spin");
     private int[] numbers = new int[37];
+    private Random rd = new Random();
+    private Timer timer;
+    //
+    //roulette panel
     private JPanel panel = new JPanel();
-    public JPanel betpanel; // Updated betpanel declaration
+    //
+    //things for bets
+    public int selectedNumber = -1;
+    public HashMap<Integer, Integer> bets = new HashMap<>();
+    public JPanel betpanel;
     public int bet = 0;
     JLabel betlabel = new JLabel(String.valueOf(bet));
+    //
+    //money visual and money itself handler
     public int money = 1000;
     JLabel moneylabel = new JLabel("money: " + money);
-
+    //
+    //components (second class)
     Components components;
+    //
+    //buttons list
     public HashMap<JButton, Integer> buttons = new HashMap<>();
-
+    // roulette constructor that handles main things about frame and panel
     public Roulette(Components components) {
         this.components = components;
+        initializeData();
+        initializeUI();
+        setupListeners();
+        this.setVisible(true);
+
+    }
+    private void setupListeners() {
+        spinButton.addActionListener(e -> {
+            angle = 0;
+            timer.start();
+        });
+
+        setuptimer();  // still keeps your Timer logic
+    }
+    private void initializeData() {
         components.addnumbers(numbers);
-
-        winnerLabel.setFont(new Font("SansSerif", Font.PLAIN, 36));
-        this.setTitle("Roulette");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1200, 1000);
-        this.setLayout(null);
-
+        components.setupblackredmap(isblack);
         try {
             image = ImageIO.read(new File("src/Images/Roulette/roulette_real.png"));
             arrow = ImageIO.read(new File("src/Images/Roulette/Arrow.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void initializeUI() {
+        this.setTitle("Roulette");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(1200, 1000);
+        this.setLayout(null);
 
         panel = new JPanel() {
             @Override
@@ -79,18 +107,29 @@ public class Roulette extends JFrame {
         panel.setBackground(Color.decode("#008000"));
         panel.setLayout(null);
         this.add(panel);
+
+        // Bet panel
         betpanel = new JPanel();
         betpanel.setLayout(null);
-        betpanel.setBounds(500, 100, 200, 100);// Position + size
-        panel.add(betpanel); // Add it to panel so it appears on top
-        setupmoneylabel();
+        betpanel.setBounds(500, 100, 200, 100);
+        panel.add(betpanel);
+        betpanel.setVisible(false);
+
+        // Spin button
         spinButton.setBounds(650, 700, 200, 100);
         spinButton.setFont(new Font("Arial", Font.BOLD, 20));
         panel.add(spinButton);
-        panel.add(winnerLabel);
-        winnerLabel.setBounds(900, 700, 400, 100);
-        betpanel.setVisible(false);
-        components.addbuttons(panel, buttons, Roulette.this);
+
+        // Money label
+        setupmoneylabel();
+
+        // Bet panel content
+        setupbetpanel();
+
+        // Add buttons for number selection
+        components.addbuttons(panel, buttons, this);
+    }
+    public void setuptimer(){
         timer = new Timer(10, e -> {
             angle += 9.7;
             int counter = (int) (angle / 9.7) % 37;
@@ -98,9 +137,10 @@ public class Roulette extends JFrame {
                 int count = rd.nextInt(10);
                 if (count == 3) {
                     timer.stop();
+                    //end of what was made by chat
+
                     // Choose winning number
                     System.out.println("number: " + numbers[counter]);
-                    rewritelabel(numbers[counter]);  // Update the winner label
                     System.out.println("redbet test1: " + redbet);
                     money = components.blackandredmoneymaker(blackbet, redbet, isblack, numbers[counter], money, panel, Roulette.this);
                     System.out.println(money + " <- penizky");
@@ -112,49 +152,14 @@ public class Roulette extends JFrame {
                         money += bets.get(numbers[counter]) * 10;  // 10x payout for this bet
                         moneylabel.setText("money: " + money);
                     }
-
-// Clear bets after payout
                     bets.clear();
 
                 }
             }
             panel.repaint();
         });
-
-
-        spinButton.addActionListener(e -> {
-            angle = 0;
-            timer.start();
-
-        });
-
-        this.setVisible(true);
-        setupbetpanel();
-        components.setupblackredmap(isblack);
     }
-
-    public void rewritelabel(int counter) {
-        winnerLabel.setText("W I N N E R: " + counter);
-    }
-
-    public void setupbetpanel() {
-
-
-        JButton addbutton = new JButton("+");
-        addbutton.setFocusable(false);
-        JButton lessbutton = new JButton("-");
-        lessbutton.setFocusable(false);
-        JButton bett = new JButton("BET");
-        lessbutton.setFocusable(false);
-        Font font = new Font("SansSerif", Font.BOLD, 30);
-        betlabel.setFont(font);
-        betpanel.setLayout(new GridLayout(2, 1));
-        JPanel numberpanel = new JPanel();
-        numberpanel.add(betlabel);
-        JPanel buttonspanel = new JPanel();
-        buttonspanel.add(addbutton);
-        buttonspanel.add(lessbutton);
-        buttonspanel.add(bett);
+    public void addbuttonListener(JButton addbutton){
         addbutton.addActionListener(new ActionListener() {
 
             @Override
@@ -165,6 +170,8 @@ public class Roulette extends JFrame {
                 System.out.println("proslo " + bet);
             }
         });
+    }
+    public void bettbuttonListener(JButton bett){
         bett.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -213,11 +220,9 @@ public class Roulette extends JFrame {
                 }
             }
         });
-
-
-
+    }
+    public void lessbuttonListener(JButton lessbutton){
         lessbutton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (bet > 100) {
@@ -227,13 +232,30 @@ public class Roulette extends JFrame {
                 }
             }
         });
+    }
+    public void setupbetpanel() {
+        JButton addbutton = new JButton("+");
+        addbutton.setFocusable(false);
+        JButton lessbutton = new JButton("-");
+        lessbutton.setFocusable(false);
+        JButton bett = new JButton("BET");
+        lessbutton.setFocusable(false);
+        Font font = new Font("SansSerif", Font.BOLD, 30);
+        betlabel.setFont(font);
+        betpanel.setLayout(new GridLayout(2, 1));
+        JPanel numberpanel = new JPanel();
+        numberpanel.add(betlabel);
+        JPanel buttonspanel = new JPanel();
+        buttonspanel.add(addbutton);
+        buttonspanel.add(lessbutton);
+        buttonspanel.add(bett);
+        addbuttonListener(addbutton);
+        bettbuttonListener(bett);
+        lessbuttonListener(lessbutton);
         betpanel.add(numberpanel, CENTER_ALIGNMENT);
         betpanel.add(buttonspanel);
-
-
         this.repaint();
     }
-
     public void setupmoneylabel() {
         JPanel moneypanel = new JPanel();
         moneypanel.setBounds(800, 100, 300, 100);
@@ -243,7 +265,6 @@ public class Roulette extends JFrame {
         moneylabel.setFont(new Font("Arial", Font.BOLD, 40));
         moneypanel.add(moneylabel);
     }
-
     public static void main(String[] args) {
         Components components1 = new Components();
         new Roulette(components1);

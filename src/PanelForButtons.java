@@ -6,7 +6,7 @@ public class PanelForButtons extends JPanel {
     private Image img;
     private int x, y;
     Components components;
-    public PanelForButtons(String imgPath, int x, int y, String section, Table table, Components components) {
+    public PanelForButtons(String imgPath, int x, int y, String section, Components components) {
         this.imgPath = imgPath;
         this.components = components;
         this.x = x;
@@ -17,7 +17,6 @@ public class PanelForButtons extends JPanel {
         this.setVisible(true);
         this.setOpaque(true);
         this.setBackground(new Color(7, 77, 35));
-        this.addMouseListener(new Hovering(section, this, table, components));
     }
 
     @Override

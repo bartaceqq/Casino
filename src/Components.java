@@ -27,7 +27,6 @@ public class Components {
             }
         });
     }
-
     public void addnumbers(int[] numbers) {
         numbers[0] = 0;
         numbers[1] = 26;
@@ -89,7 +88,6 @@ public class Components {
 
         // 0 is green; you can leave it unassigned or handle it explicitly
     }
-
     public void souter(int money, int blackbet){
         System.out.println("proslo");
         System.out.println(blackbet + " blackbetik");
@@ -105,7 +103,7 @@ public class Components {
             if (map.get(winningnumber)) {
                 // Black number
                 System.out.println("BLACKBETIK  " + blackbet);
-                return currentMoney + blackbet * 2; // win the black bet
+                return currentMoney + (int)(blackbet * 1.7);
             } else {
                 // Not black, loss
                 return currentMoney; // loss
@@ -114,15 +112,13 @@ public class Components {
             // Red bet logic
             if (!map.get(winningnumber)) {
                 // Red number
-                return currentMoney + redbet * 2; // win the red bet
+                return currentMoney +(int) (redbet * 1.7); // win the red bet
             } else {
                 // Not red, loss
                 return currentMoney; // loss
             }
         }
     }
-
-
     public void addbuttons(JPanel panel, HashMap buttons, Roulette roulette) {
 
         //number files
@@ -198,7 +194,6 @@ public class Components {
         panel.repaint();
         doredandblack(red, black, roulette.betpanel,roulette);
     }
-
     private int extractNumber(String filename) {
         try {
             String num = filename.replaceAll("[^\\d]", "");
