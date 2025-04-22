@@ -26,6 +26,7 @@ public class SlotMachine extends JPanel {
                     if (random == 5) {
                             timer.stop();
                             thenumber =fruitcount;
+                            count = 0;
                     }
                 }
                 slotLabel.setIcon(symbols.get(fruitcount));
@@ -54,5 +55,8 @@ public class SlotMachine extends JPanel {
     public void Spin(){
        runtimer();
         System.out.println(thenumber);
+    }
+    public void reset(){
+        ;
     }
 }

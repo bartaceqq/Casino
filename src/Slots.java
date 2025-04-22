@@ -30,7 +30,8 @@ public class Slots extends JFrame {
         setupSpinButton();
     }
     public void setupSpinButton(){
-        JButton spinButton = new JButton("Spin");
+        JButton spinButton = new JButton("");
+        spinButton.setIcon(new ImageIcon("src/Images/Slots/SpinButton.png"));
         spinButton.setBackground(Color.GRAY);
         spinButton.setForeground(Color.YELLOW);
         spinButton.setBounds(150, 650, 900, 200);
@@ -40,6 +41,7 @@ public class Slots extends JFrame {
                 slotMachine.Spin();
                 slotMachine2.Spin();
                 slotMachine3.Spin();
+
                 System.out.println("seygex");
             }
         });
