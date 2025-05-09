@@ -1,56 +1,65 @@
+import Images.Slots.SlotsComponents;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class Slots extends JFrame {
-    JPanel mainPanel = new JPanel();
-    SlotMachine slotMachine = new SlotMachine();
-    SlotMachine slotMachine2 = new SlotMachine();
-    SlotMachine slotMachine3 = new SlotMachine();
+    private SlotMachine slot1;
+    private SlotMachine slot2;
+    private SlotMachine slot3;
+    private JButton spinbutton;
+    JPanel mainpanel;
     public Slots() {
-        this.setTitle("Slots");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(null);
-        this.setSize(1200, 1000);
+        setUpMainThings();
+        addSlots();
+        spinButttonSetup();
+    }
+        public void setUpMainThings(){
+            this.setTitle("Slots");
+            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.setSize(1200, 800);
+            this.setResizable(false);
+            this.setVisible(true);
+            mainpanel = new JPanel();
+            this.add(mainpanel);
+        }
+        public void addSlots(){
+        slot1 = new SlotMachine(this, "1");
+        slot2 = new SlotMachine(this, "2");
+        slot3 = new SlotMachine(this, "3");
+        mainpanel.add(slot1);
+        mainpanel.add(slot2);
+        mainpanel.add(slot3);
+        }
+        public void spinButttonSetup(){
+        spinbutton = new JButton();
+        ImageIcon spinicon = new ImageIcon("src/Images/Slots/SpinButton.png");
+        spinbutton.setIcon(spinicon);
+        spinbutton.setContentAreaFilled(false);
+        spinbutton.setBorderPainted(false);
+        spinbutton.setFocusPainted(false);
+        mainpanel.add(spinbutton);
+        }
+        public void setupspinbuttonfunction(){
+        spinbutton.addActionListener(new ActionListener() {
 
-        setmainpanel();
-        this.setVisible(true);
-        this.repaint();
-    }
-    public void setmainpanel(){
-        mainPanel.setLayout(null);
-        mainPanel.setBackground(Color.BLACK);
-        mainPanel.setBounds(150, 350, 900,300);
-        mainPanel.setLayout(new GridLayout(1,3));
-        mainPanel.add(slotMachine);
-        mainPanel.add(slotMachine2);
-        mainPanel.add(slotMachine3);
-        this.add(mainPanel);
-        setupSpinButton();
-    }
-    public void setupSpinButton(){
-        JButton spinButton = new JButton("");
-        spinButton.setIcon(new ImageIcon("src/Images/Slots/SpinButton.png"));
-        spinButton.setBackground(Color.GRAY);
-        spinButton.setForeground(Color.YELLOW);
-        spinButton.setBounds(150, 650, 900, 200);
-        spinButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                slotMachine.Spin();
-                slotMachine2.Spin();
-                slotMachine3.Spin();
-
-                System.out.println("seygex");
+                slot1.Spin();
+                slot2.Spin();
+                slot3.Spin();
             }
         });
-        this.add(spinButton);
-    }
+        }
+
+
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-        Slots s = new Slots();
-
+            new Slots();
         });
     }
 }
