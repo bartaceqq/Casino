@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class SlotMachine extends JPanel {
     private JLabel slotLabel;
+    CheckIfMatch checkIfMatch;
     private Timer timer;
     public int randomer = 10;
     private ArrayList<ImageIcon> symbols;
@@ -19,6 +20,8 @@ public class SlotMachine extends JPanel {
     private int fruitcount = 0;
     private Slots slots;
     private String name;
+    int col;
+    int row;
 
 
 
@@ -30,13 +33,14 @@ public class SlotMachine extends JPanel {
                 count++;
                 spinning = true;
                 System.out.println("spinning: " + spinning);
-                if (count > 200) {
+                if (count > 100) {
                     Random rd = new Random();
                     int random = rd.nextInt(randomer);
                     System.out.println(random);
                     if (random == 5) {
                             timer.stop();
                             thenumber =fruitcount;
+                            checkIfMatch.addtocounter(SlotMachine.this);
                             count = 0;
                             spinning = false;
                             randomer = 50;
@@ -51,8 +55,10 @@ public class SlotMachine extends JPanel {
 
         timer.restart();
     }
-    public SlotMachine(Slots slots,String name) {
-       
+    public SlotMachine(Slots slots,String name, int row, int col, CheckIfMatch checkIfMatch) {
+       this.row = row;
+       this.col = col;
+       this.checkIfMatch = checkIfMatch;
 
         this.name=name;
         this.setOpaque(false);
