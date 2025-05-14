@@ -7,6 +7,7 @@ public class CheckIfMatch {
     private final ArrayList<SlotMachine> slotlist = new ArrayList<>();
     private final Slots slots;
     private final ArrayList<Point[]> allpoints = new ArrayList<>();
+    public int total;
 
     public CheckIfMatch(Slots slots) {
         this.slots = slots;
@@ -40,6 +41,7 @@ public class CheckIfMatch {
                     if (count >= 3) {
                         found = true;
                         drawVerticalMatch(row - 1, col, count);
+                        total += slots.bet;
                     }
                     count = 1;
                 }
@@ -47,6 +49,7 @@ public class CheckIfMatch {
             if (count >= 3) {
                 found = true;
                 drawVerticalMatch(3, col, count);
+                total += slots.bet;
             }
         }
 
@@ -61,6 +64,11 @@ public class CheckIfMatch {
                     if (count >= 3) {
                         found = true;
                         drawHorizontalMatch(row, col - 1, count);
+                        switch (count) {
+                            case 3 -> total += slots.bet;
+                            case 4 -> total += slots.bet * 2;
+                            case 5 -> total += slots.bet * 3;
+                        }
                     }
                     count = 1;
                 }
@@ -68,6 +76,11 @@ public class CheckIfMatch {
             if (count >= 3) {
                 found = true;
                 drawHorizontalMatch(row, 5, count);
+                switch (count) {
+                    case 3 -> total += slots.bet;
+                    case 4 -> total += slots.bet * 2;
+                    case 5 -> total += slots.bet * 3;
+                }
             }
         }
 
@@ -87,6 +100,7 @@ public class CheckIfMatch {
                 if (match.size() >= 3) {
                     found = true;
                     drawMatchLine(match.toArray(new SlotMachine[0]));
+                    total += slots.bet * 2;
                 }
             }
         }
@@ -107,6 +121,7 @@ public class CheckIfMatch {
                 if (match.size() >= 3) {
                     found = true;
                     drawMatchLine(match.toArray(new SlotMachine[0]));
+                    total += slots.bet * 2;
                 }
             }
         }
@@ -115,7 +130,12 @@ public class CheckIfMatch {
             System.out.println("No matches found.");
         }
 
+        // ✅ Final payout logic after all matches
         slots.addpoints(allpoints);
+        slots.payout = total;
+        slots.addmoney();
+        total = 0;
+
         slotlist.clear();
         clearGrid();
         allpoints.clear();
@@ -136,11 +156,13 @@ public class CheckIfMatch {
         }
         drawMatchLine(match);
     }
-//chat
+
     private void drawMatchLine(SlotMachine... slotsToMatch) {
         ArrayList<Point> points = new ArrayList<>();
         for (SlotMachine s : slotsToMatch) {
-            if (s != null) points.add(convertToFrameCenter(s));
+            if (s != null) {
+                points.add(convertToFrameCenter(s));
+            }
         }
         allpoints.add(points.toArray(new Point[6]));
         slots.drawline = true;
@@ -149,12 +171,15 @@ public class CheckIfMatch {
 
     private Point convertToFrameCenter(SlotMachine slot) {
         if (slot != null) {
-            return SwingUtilities.convertPoint(slot,new Point(slot.getWidth() / 2, slot.getHeight() / 2),
-                    slots);
+            return SwingUtilities.convertPoint(
+                    slot,
+                    new Point(slot.getWidth() / 2, slot.getHeight() / 2),
+                    slots
+            );
         }
         return null;
     }
-//konec chata
+
     private void clearGrid() {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
