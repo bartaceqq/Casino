@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLOutput;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,7 +12,6 @@ public class SlotMachine extends JPanel {
     public int randomer = 10;
     private ArrayList<ImageIcon> symbols;
     public int thenumber;
-    // 👇 Move these OUTSIDE so they persist
     private int count = 0;
     public boolean spinning = false;
     private int fruitcount = 0;
@@ -23,69 +20,71 @@ public class SlotMachine extends JPanel {
     int col;
     int row;
 
-
-
-    public void runtimer(){
-
-        timer = new Timer(10, new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                count++;
-                spinning = true;
-                System.out.println("spinning: " + spinning);
-                if (count > 100) {
-                    Random rd = new Random();
-                    int random = rd.nextInt(randomer);
-                    System.out.println(random);
-                    if (random == 5) {
-                            timer.stop();
-                            thenumber =fruitcount;
-                            checkIfMatch.addtocounter(SlotMachine.this);
-                            count = 0;
-                            spinning = false;
-                            randomer = 50;
-                    }
-                }
-                slotLabel.setIcon(symbols.get(fruitcount));
-                slots.repaint();
-                fruitcount = (fruitcount + 1) % symbols.size();
-            }
-
-        });
-
-        timer.restart();
-    }
-    public SlotMachine(Slots slots,String name, int row, int col, CheckIfMatch checkIfMatch) {
-       this.row = row;
-       this.col = col;
-       this.checkIfMatch = checkIfMatch;
-
-        this.name=name;
+    public SlotMachine(Slots slots, String name, int row, int col, CheckIfMatch checkIfMatch) {
+        this.row = row;
+        this.col = col;
+        this.checkIfMatch = checkIfMatch;
+        this.name = name;
         this.setOpaque(false);
         this.slots = slots;
         setLayout(new BorderLayout());
         setSize(200, 300);
+
         slotLabel = new JLabel();
         slotLabel.setHorizontalAlignment(JLabel.CENTER);
         slotLabel.setVerticalAlignment(JLabel.CENTER);
         slotLabel.setOpaque(false);
         add(slotLabel, BorderLayout.CENTER);
-        symbols = new ArrayList<>();
-        symbols.add(new ImageIcon("src/Images/Fruit/Banana.png"));
-        symbols.add(new ImageIcon("src/Images/Fruit/WaterM.png"));
-        symbols.add(new ImageIcon("src/Images/Fruit/grape.png"));
-        symbols.add(new ImageIcon("src/Images/Fruit/lemon.png"));
-        symbols.add(new ImageIcon("src/Images/Fruit/cherry.png"));
 
+        symbols = new ArrayList<>();
+        symbols.add(new ImageIcon("src/Images/Fruit/Banana.png"));   // 0
+        symbols.add(new ImageIcon("src/Images/Fruit/WaterM.png"));   // 1
+        symbols.add(new ImageIcon("src/Images/Fruit/grape.png"));    // 2
+        symbols.add(new ImageIcon("src/Images/Fruit/lemon.png"));    // 3
+        symbols.add(new ImageIcon("src/Images/Fruit/cherry.png"));   // 4
     }
-    public void Spin(){
+
+    public void Spin() {
         if (!spinning) {
-            spinning = true; // set early to avoid double calls
+            spinning = true; // Prevent double spins
             runtimer();
         }
     }
 
-    public void reset(){
-        ;
+    public void runtimer() {
+        timer = new Timer(10, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                count++;
+                spinning = true;
+                System.out.println("spinning: " + spinning);
+
+                if (count > 100) {
+                    Random rd = new Random();
+                    int random = rd.nextInt(randomer);
+                    System.out.println(random);
+
+                    if (random == 5) {
+                        timer.stop();
+                        thenumber = fruitcount; // ✅ CORRECTED: assign before increment
+                        checkIfMatch.addtocounter(SlotMachine.this);
+                        count = 0;
+                        spinning = false;
+                        randomer = 50;
+                    }
+                }
+
+                // ✅ Show image BEFORE increment
+                slotLabel.setIcon(symbols.get(fruitcount));
+                thenumber = fruitcount; // ✅ Set the number that matches the image
+                fruitcount = (fruitcount + 1) % symbols.size();
+                slots.repaint();
+            }
+        });
+
+        timer.restart();
+    }
+
+    public void reset() {
+        // Optional future logic
     }
 }

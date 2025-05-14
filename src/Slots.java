@@ -1,16 +1,17 @@
-import Images.Slots.SlotsComponents;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Slots extends JFrame {
     HashMap<SlotMachine, Integer> slotlist = new HashMap<>();
     private JButton spinbutton;
+    public boolean drawline = false;
     JPanel mainpanel;
-    CheckIfMatch checkifmatch = new CheckIfMatch();
+    CheckIfMatch checkifmatch = new CheckIfMatch(Slots.this);
+    ArrayList<Point[]> pointlist = new ArrayList<>();
 
     public Slots() {
         setUpMainThings();
@@ -23,18 +24,19 @@ public class Slots extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1200, 800);
         this.setResizable(false);
-        this.setVisible(true);
 
         mainpanel = new BackgroundPanel("src/Images/Slots/Background.png");
         mainpanel.setLayout(null);
         this.add(mainpanel);
+
+        this.setVisible(true);
     }
 
     public void addSlots() {
         int startX = 160;
         int width = 200;
         int height = 300;
-        int spacing = 170; // Horizontal space between slots
+        int spacing = 170;
         int slotsPerRow = 5;
         int baseY = 350;
         int rowOffset = 150;
@@ -49,6 +51,30 @@ public class Slots extends JFrame {
             slot.setBounds(x, y, width, height);
             slotlist.put(slot, i);
             mainpanel.add(slot);
+        }
+    }
+
+    public void addpoints(ArrayList<Point[]> points) {
+        pointlist.clear();
+        pointlist.addAll(points);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        if (drawline) {
+            for (Point[] points : pointlist) {
+                g2d.setColor(Color.RED);
+
+                for (int i = 0; i < points.length - 1; i++) {
+                    if (points[i] != null && points[i + 1] != null) {
+                        g2d.setStroke(new BasicStroke(5));
+                        g2d.drawLine(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+                    }
+                }
+            }
         }
     }
 
@@ -68,6 +94,7 @@ public class Slots extends JFrame {
         spinbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                drawline = false;
                 for (SlotMachine slot : slotlist.keySet()) {
                     slot.Spin();
                 }
@@ -77,6 +104,6 @@ public class Slots extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Slots());
+        SwingUtilities.invokeLater(Slots::new);
     }
 }
