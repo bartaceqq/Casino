@@ -3,18 +3,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class SlotMachine extends JPanel {
     private JLabel slotLabel;
     CheckIfMatch checkIfMatch;
     private Timer timer;
-    public int randomer = 10;
-    private ArrayList<ImageIcon> symbols;
+    private HashMap<Integer, ImageIcon> symbols;
     public int thenumber;
     private int count = 0;
     public boolean spinning = false;
-    private int fruitcount = 0;
+    private int timertime = 0;
     private Slots slots;
     private String name;
     int col;
@@ -36,12 +36,12 @@ public class SlotMachine extends JPanel {
         slotLabel.setOpaque(false);
         add(slotLabel, BorderLayout.CENTER);
 
-        symbols = new ArrayList<>();
-        symbols.add(new ImageIcon("src/Images/Fruit/Banana.png"));   // 0
-        symbols.add(new ImageIcon("src/Images/Fruit/WaterM.png"));   // 1
-        symbols.add(new ImageIcon("src/Images/Fruit/grape.png"));    // 2
-        symbols.add(new ImageIcon("src/Images/Fruit/lemon.png"));    // 3
-        symbols.add(new ImageIcon("src/Images/Fruit/cherry.png"));   // 4
+        symbols = new HashMap<>();
+        symbols.put(0, new ImageIcon("src/Images/Fruit/Banana.png"));   // 0
+        symbols.put(1, new ImageIcon("src/Images/Fruit/WaterM.png"));   // 1
+        symbols.put(2, new ImageIcon("src/Images/Fruit/grape.png"));    // 2
+        symbols.put(3, new ImageIcon("src/Images/Fruit/lemon.png"));    // 3
+        symbols.put(4, new ImageIcon("src/Images/Fruit/cherry.png"));   // 4
     }
 
     public void Spin() {
@@ -52,37 +52,38 @@ public class SlotMachine extends JPanel {
     }
 
     public void runtimer() {
-        timer = new Timer(10, new ActionListener() {
+        spinning = true;
+        timertime = 0;
+
+        timer = new Timer(10, new ActionListener() { // Fast smooth spinning every 50ms
+            @Override
             public void actionPerformed(ActionEvent e) {
-                count++;
-                spinning = true;
-                System.out.println("spinning: " + spinning);
+                timertime++;
 
-                if (count > 100) {
-                    Random rd = new Random();
-                    int random = rd.nextInt(randomer);
-                    System.out.println(random);
+                // Pick a **random symbol every frame** to simulate real slot spinning
+                Random rand = new Random();
+                int randomIndex = rand.nextInt(symbols.size());
+                slotLabel.setIcon(symbols.get(randomIndex));
+                thenumber = randomIndex;
 
-                    if (random == 5) {
-                        timer.stop();
-                        thenumber = fruitcount; // ✅ CORRECTED: assign before increment
-                        checkIfMatch.addtocounter(SlotMachine.this);
-                        count = 0;
-                        spinning = false;
-                        randomer = 50;
-                    }
+                // Stop after ~3 seconds (adjustable by changing timertime limit)
+                if (timertime >= 60) { // 60 iterations × 50ms = 3000ms (3 seconds)
+                    timer.stop();
+                    spinning = false;
+
+                    // Pick a **final random symbol** instead of just the last iteration
+                    int finalIndex = rand.nextInt(symbols.size());
+                    slotLabel.setIcon(symbols.get(finalIndex));
+                    thenumber = finalIndex;
+
+                    checkIfMatch.addtocounter(SlotMachine.this); // Trigger match checking
                 }
-
-                // ✅ Show image BEFORE increment
-                slotLabel.setIcon(symbols.get(fruitcount));
-                thenumber = fruitcount; // ✅ Set the number that matches the image
-                fruitcount = (fruitcount + 1) % symbols.size();
-                slots.repaint();
             }
         });
 
-        timer.restart();
+        timer.start();
     }
+
 
     public void reset() {
         // Optional future logic

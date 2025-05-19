@@ -142,13 +142,18 @@ public class Slots extends JFrame {
                     }
                 }
                 if (can == true) {
-                    drawline = false;
-                    payout = 0;
-                    money -= bet;
-                    moneylabel.setText("$" + money);
-                    for (SlotMachine slot : slotlist.keySet()) {
+                    if (bet <= money) {
+                        drawline = false;
+                        payout = 0;
+                        money -= bet;
+                        moneylabel.setText("$" + money);
+                        for (SlotMachine slot : slotlist.keySet()) {
 
-                        slot.Spin();
+                            slot.Spin();
+                        }
+                    } else {
+                        new PopUp(Slots.this, "U ARE TRYING TO BET MORE THAN YOU HAVE");
+
                     }
                 }
             }
