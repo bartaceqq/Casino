@@ -2,8 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ButtonSetup {
-    public void setupaddbutton(JButton addbet, Font pixel, JPanel mainpanel) {
-        addbet = new JButton("");
+
+    public JButton setupaddbutton(Font pixel, JPanel mainpanel) {
+        JButton addbet = new JButton();
         ImageIcon icon = new ImageIcon("src/Images/BlackJack/plus.png");
         addbet.setIcon(icon);
         addbet.setContentAreaFilled(false);
@@ -15,9 +16,11 @@ public class ButtonSetup {
         addbet.setFont(pixel);
         addbet.setBounds(900, 600, 100, 50);
         mainpanel.add(addbet);
+        return addbet;
     }
-    public void setuplessbutton(JButton lessbet, Font pixel, JPanel mainpanel){
-        lessbet = new JButton("");
+
+    public JButton setuplessbutton(Font pixel, JPanel mainpanel) {
+        JButton lessbet = new JButton();
         ImageIcon icon = new ImageIcon("src/Images/BlackJack/minus.png");
         lessbet.setIcon(icon);
         lessbet.setContentAreaFilled(false);
@@ -29,21 +32,32 @@ public class ButtonSetup {
         lessbet.setFont(pixel);
         lessbet.setBounds(200, 600, 100, 50);
         mainpanel.add(lessbet);
+        return lessbet;
     }
-    public void addbetbutton(JButton betbutton, Font pixel, JPanel mainpanel){
-        betbutton = new JButton("BET");
-        betbutton.setHorizontalAlignment(SwingConstants.CENTER);
-        betbutton.setVerticalAlignment(SwingConstants.CENTER);
-        betbutton.setFont(pixel);
-        betbutton.setBounds(550, 700, 200, 50);
-        mainpanel.add(betbutton);
-    }
-    public void setupbetlabel(JLabel betlabel, Font pixel, JPanel mainpanel){
-        betlabel = new JLabel("1000");
+
+    public JLabel setupbetlabel(Font pixel, JPanel mainpanel) {
+        JLabel betlabel = new JLabel();
         betlabel.setHorizontalAlignment(SwingConstants.CENTER);
         betlabel.setVerticalAlignment(SwingConstants.CENTER);
         betlabel.setFont(pixel);
         betlabel.setBounds(440, 600, 300, 100);
         mainpanel.add(betlabel);
+        return betlabel;
+    }
+
+    public JLabel setupinfolabel(Font pixel, JPanel mainpanel) {
+        JLabel infolabel = new JLabel("INFO");
+        infolabel.setHorizontalAlignment(SwingConstants.CENTER);
+        infolabel.setVerticalAlignment(SwingConstants.CENTER);
+        infolabel.setFont(pixel);
+        infolabel.setOpaque(false);
+        infolabel.setBounds(300, 250, 600, 100);
+        mainpanel.add(infolabel);
+        return infolabel;
+    }
+
+    public void changeinfolabel(JLabel infolabel, String text, BlackJack blackjack) {
+        infolabel.setText(text);
+        blackjack.repaint();
     }
 }
