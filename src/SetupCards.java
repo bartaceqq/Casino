@@ -1,49 +1,70 @@
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class SetupCards {
     public void extractFiles(BufferedImage[][] cards) {
         File folder = new File("src/Images/BlackJack/Cards");
 
-        File[] cardFiles = folder.listFiles();
-        if (cardFiles == null) return;
+        if (!folder.exists() || !folder.isDirectory()) {
+            System.err.println("Card image directory not found.");
+            return;
+        }
 
-        for (File file : cardFiles) {
-            if (!file.getName().endsWith(".png")) continue;
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".png") && name.startsWith("card_"));
+        if (files == null) return;
 
-            String name = file.getName().replace(".png", ""); // card_clubs_08
+        for (File file : files) {
+            try {
+                String filename = file.getName().replace(".png", ""); // remove extension
+                String[] parts = filename.split("_"); // expect "card_suit_rank"
 
-            if (!name.startsWith("card_")) continue;
-
-            String[] parts = name.substring(5).split("_"); // [clubs, 08]
-
-            int suit = switch (parts[0]) {
-                case "clubs" -> 0;
-                case "diamonds" -> 1;
-                case "hearts" -> 2;
-                case "spades" -> 3;
-                default -> -1;
-            };
-
-            int rank = switch (parts[1]) {
-                case "J" -> 9;
-                case "Q" -> 10;
-                case "K" -> 11;
-                case "A" -> 12;
-                default -> Integer.parseInt(parts[1]) - 2;
-            };
-
-            if (suit >= 0 && rank >= 0 && rank < 13) {
-                try {
-                    cards[rank][suit] = ImageIO.read(file);
-                    System.out.println("Loaded: " + name + " to cards[" + rank + "][" + suit + "]");
-                } catch (IOException e) {
-                    System.out.println("Failed to load " + name);
-                    e.printStackTrace();
+                if (parts.length != 3) {
+                    System.err.println("Skipping malformed file: " + filename);
+                    continue;
                 }
+
+                String suitStr = parts[1].toLowerCase();
+                String rankStr = parts[2].toUpperCase();
+
+                int suit = switch (suitStr) {
+                    case "clubs" -> 0;
+                    case "diamonds" -> 1;
+                    case "hearts" -> 2;
+                    case "spades" -> 3;
+                    default -> -1;
+                };
+
+                int rank;
+                switch (rankStr) {
+                    case "A" -> rank = 12; // Ace as highest index
+                    case "K" -> rank = 11;
+                    case "Q" -> rank = 10;
+                    case "J" -> rank = 9;
+                    default -> {
+                        try {
+                            int num = Integer.parseInt(rankStr);
+                            rank = num - 2; // 2–10 to 0–8
+                        } catch (NumberFormatException e) {
+                            System.err.println("Invalid rank: " + rankStr);
+                            continue;
+                        }
+                    }
+                }
+
+                if (suit < 0 || rank < 0 || rank >= 13) {
+                    System.err.println("Invalid card: " + filename);
+                    continue;
+                }
+
+                BufferedImage img = ImageIO.read(file);
+                cards[rank][suit] = img;
+
+            } catch (Exception e) {
+                System.err.println("Failed to load card image: " + file.getName());
+                e.printStackTrace();
             }
         }
     }
+
 }
