@@ -60,4 +60,24 @@ public class ButtonSetup {
         infolabel.setText(text);
         blackjack.repaint();
     }
+    public JButton setuphitbutton( Font pixel, JPanel mainpanel) {
+       JButton hitbutton = new JButton("HIT");
+        hitbutton.setHorizontalAlignment(SwingConstants.CENTER);
+        hitbutton.setVerticalAlignment(SwingConstants.CENTER);
+        hitbutton.setFont(pixel);
+        hitbutton.setOpaque(false);
+        hitbutton.setBounds(350, 600, 200, 100);
+        mainpanel.add(hitbutton);
+        return hitbutton;
+    }
+    public JButton setupstaybutton( Font pixel, JPanel mainpanel) {
+        JButton staybutton = new JButton("STAY");
+        staybutton.setHorizontalAlignment(SwingConstants.CENTER);
+        staybutton.setVerticalAlignment(SwingConstants.CENTER);
+        staybutton.setFont(pixel);
+        staybutton.setOpaque(false);
+        staybutton.setBounds(650, 600, 200, 100);
+        mainpanel.add(staybutton);
+        return staybutton;
+    }
 }
