@@ -1,9 +1,9 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Random;
 
 public class BlackJack extends JFrame {
     private JPanel mainpanel;
@@ -33,6 +33,12 @@ public class BlackJack extends JFrame {
     private boolean secondroundplaying = false;
     private boolean betted = false;
     ButtonSetup buttonSetup = new ButtonSetup();
+    private PlayerState dealer;
+    private Pointer dealerPosition = new Pointer(530, 100); // middle top
+
+    public int roundcounter = 1;
+    private int roundcounterd = 1;
+    private int counter = 0;
 
     public BlackJack() {
         setTitle("Black Jack");
@@ -52,9 +58,6 @@ public class BlackJack extends JFrame {
         setVisible(true);
 
         new PopUp(this, "How many players are playing?", this);
-        if (secondroundplaying) {
-            secondroundplay();
-        }
     }
 
     public void setuppositions() {
@@ -73,6 +76,8 @@ public class BlackJack extends JFrame {
                 players[2] = new PlayerState(thirdplayer);
             }
         }
+
+        dealer = new PlayerState(dealerPosition);
     }
 
     private void setupMainPanel() {
@@ -88,19 +93,14 @@ public class BlackJack extends JFrame {
             e.printStackTrace();
         }
     }
+
     private void resetRound() {
         for (PlayerState player : players) {
-            player.hit = false;
-            player.stay = false;
             player.hashitstay = false;
             player.hassecondcard = false;
-            // Optionally reset hasCard/value if you want a new hand:
-            // player.hasCard = false;
-            // player.value = 0;
         }
-
         playertochoose = 0;
-        secondround(); // Show hit/stay again
+        secondround();
     }
 
     public void SetupButtons() {
@@ -126,14 +126,13 @@ public class BlackJack extends JFrame {
                 currentPlayerToBet++;
 
                 if (currentPlayerToBet == totalPlayers) {
-                    dealInitialCards(0, true);
+                    dealInitialCards(true);
                 } else {
                     buttonSetup.changeinfolabel(showinfoLabel, "Player " + (currentPlayerToBet + 1) + " is betting", this);
                 }
             }
         });
 
-        // ✅ Moved from secondroundplay – only added ONCE
         hitbutton.addActionListener(e -> {
             if (playertochoose < totalPlayers && !players[playertochoose].hashitstay) {
                 players[playertochoose].hit = true;
@@ -144,11 +143,12 @@ public class BlackJack extends JFrame {
 
                 playertochoose++;
                 if (playertochoose == totalPlayers) {
-                    dealInitialCards(1, false);
+                    dealInitialCards(false);
                 } else {
                     changetext("Player " + (playertochoose + 1) + " is playing");
                 }
             }
+            updateability();
         });
 
         staybutton.addActionListener(e -> {
@@ -161,11 +161,12 @@ public class BlackJack extends JFrame {
 
                 playertochoose++;
                 if (playertochoose == totalPlayers) {
-                    dealInitialCards(1, false);
+                    dealInitialCards(false);
                 } else {
                     changetext("Player " + (playertochoose + 1) + " is playing");
                 }
             }
+            updateability();
         });
     }
 
@@ -177,10 +178,32 @@ public class BlackJack extends JFrame {
         staybutton.setVisible(true);
         playertochoose = 0;
         changetext("Player " + (playertochoose + 1) + " is playing");
+        updateability();
     }
 
-    public void secondroundplay() {
-        // now empty (listener logic is in SetupButtons)
+    public void dealerround() {
+        Random rand = new Random();
+        int randomizer = rand.nextInt(100);
+
+        if (dealer.value <= 12) {
+            dealer.hit = true;
+            dealer.stay = false;
+        } else if (dealer.value < 17) {
+            if (randomizer < 50) {
+                dealer.hit = true;
+                dealer.stay = false;
+            } else {
+                dealer.hit = false;
+                dealer.stay = true;
+            }
+        } else {
+            dealer.hit = false;
+            dealer.stay = true;
+        }
+    }
+
+    public void updateability() {
+        hitbutton.setEnabled(!players[playertochoose].stay && players[playertochoose].value < 21);
     }
 
     public void changetext(String text) {
@@ -188,9 +211,20 @@ public class BlackJack extends JFrame {
         mainpanel.repaint();
     }
 
-    private void dealInitialCards(int doubler, boolean betting) {
-        System.out.println(players.length + " players length");
+    private void dealInitialCards(boolean betting) {
+        counter++;
         playertochoose = 0;
+
+        if (!dealer.hasBet) {
+            dealCardToDealer();
+            dealer.hasBet = true;
+        } else {
+            dealerround(); // Moved BEFORE checking dealer.hit
+            if (dealer.hit) {
+                dealCardToDealer();
+            }
+        }
+
         for (int i = 0; i < players.length; i++) {
             int rawRank = (int) (Math.random() * 13) + 1;
             int rank = (rawRank == 1) ? 11 : (rawRank >= 11) ? 10 : rawRank;
@@ -204,7 +238,6 @@ public class BlackJack extends JFrame {
 
             int cardWidth = 128;
             int cardHeight = 128;
-
             int x = players[i].position.x;
             int y = players[i].position.y;
 
@@ -215,30 +248,52 @@ public class BlackJack extends JFrame {
                 players[i].hasCard = true;
                 players[i].value += rank;
                 System.out.println("Dealt card to player " + (i + 1) + ": Rank " + rank + ", Suit " + suit);
-            } else if (!betting && !players[i].hassecondcard && players[i].hashitstay) {
-                if (players[i].hit) {
-                    int yOffset = -30;
-                    int xOffset = 30;
-                    label.setBounds(x + xOffset, y + yOffset, cardWidth, cardHeight);
-                    players[i].hassecondcard = true;
-                    players[i].value += rank;
-                    System.out.println("Dealt second card to player " + (i + 1) + ": Rank " + rank + ", Suit " + suit);
-                }
+            } else if (!betting && !players[i].hassecondcard && players[i].hashitstay && players[i].hit) {
+                int yOffset = (-30) * counter;
+                int xOffset = (-30) * counter;
+                label.setBounds(x + xOffset, y + yOffset, cardWidth, cardHeight);
+                players[i].hassecondcard = true;
+                players[i].value += rank;
+                System.out.println("Dealt second card to player " + (i + 1) + ": Rank " + rank + ", Suit " + suit);
             } else {
                 continue;
             }
 
+            roundcounter++;
             mainpanel.add(label);
             mainpanel.repaint();
         }
 
         for (int i = 0; i < players.length; i++) {
-            System.out.println("player " + (i + 1) + " has value: " + players[i].value);
+            System.out.println("Player " + (i + 1) + " has value: " + players[i].value);
         }
 
-        secondround();
         resetRound();
+    }
 
+    private void dealCardToDealer() {
+        int rawRankd = (int) (Math.random() * 13) + 1;
+        int rankd = (rawRankd == 1) ? 11 : (rawRankd >= 11) ? 10 : rawRankd;
+        int suitd = (int) (Math.random() * 4) + 1;
+
+        BufferedImage imgd = cards[rankd][suitd];
+        if (imgd == null) {
+            System.out.println("error while loading card: [rank] = " + rankd + ", suit = " + suitd);
+        }
+
+        dealer.value += rankd;
+        int cardWidthd = 128;
+        int cardHeightd = 128;
+        int yOffsetd = (-20) * roundcounterd;
+        int xOffsetd = (-20) * roundcounterd;
+        int xd = dealerPosition.x;
+        int yd = dealerPosition.y;
+
+        JLabel labeld = new JLabel(new ImageIcon(imgd.getScaledInstance(cardWidthd, cardHeightd, Image.SCALE_SMOOTH)));
+        labeld.setBounds(xd + xOffsetd, yd + yOffsetd, cardWidthd, cardHeightd);
+        mainpanel.add(labeld);
+        mainpanel.repaint();
+        roundcounterd++;
     }
 
     public static void main(String[] args) {
