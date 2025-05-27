@@ -1,9 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ButtonSetup {
 
-    public JButton setupaddbutton(Font pixel, JPanel mainpanel) {
+    public JButton setupaddbutton(Font pixel, JPanel mainpanel,BlackJack blackJack) {
         JButton addbet = new JButton();
         ImageIcon icon = new ImageIcon("src/Images/BlackJack/plus.png");
         addbet.setIcon(icon);
@@ -15,11 +17,22 @@ public class ButtonSetup {
         addbet.setVerticalAlignment(SwingConstants.CENTER);
         addbet.setFont(pixel);
         addbet.setBounds(900, 600, 100, 50);
+        addbet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("pridava");
+                if (blackJack.players[blackJack.currentPlayerToBet].money>0){
+                    blackJack.players[blackJack.currentPlayerToBet].money-=50;
+                    blackJack.players[blackJack.currentPlayerToBet].bet+=50;
+                    blackJack.changebetlabeltext();
+                }
+            }
+        });
         mainpanel.add(addbet);
         return addbet;
     }
 
-    public JButton setuplessbutton(Font pixel, JPanel mainpanel) {
+    public JButton setuplessbutton(Font pixel, JPanel mainpanel, BlackJack blackJack) {
         JButton lessbet = new JButton();
         ImageIcon icon = new ImageIcon("src/Images/BlackJack/minus.png");
         lessbet.setIcon(icon);
@@ -31,6 +44,17 @@ public class ButtonSetup {
         lessbet.setVerticalAlignment(SwingConstants.CENTER);
         lessbet.setFont(pixel);
         lessbet.setBounds(200, 600, 100, 50);
+        lessbet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("ubira");
+                if (blackJack.players[blackJack.currentPlayerToBet].bet>0){
+                    blackJack.players[blackJack.currentPlayerToBet].money+=50;
+                    blackJack.players[blackJack.currentPlayerToBet].bet-=50;
+                    blackJack.changebetlabeltext();
+                }
+            }
+        });
         mainpanel.add(lessbet);
         return lessbet;
     }

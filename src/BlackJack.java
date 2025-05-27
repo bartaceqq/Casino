@@ -9,11 +9,13 @@ public class BlackJack extends JFrame {
     private JPanel mainpanel;
     public int playercount = 0;
     private JLabel showinfoLabel;
-    private PlayerState[] players;
-    private int currentPlayerToBet = 0;
+    public PlayerState[] players;
+    public int currentPlayerToBet = 0;
     private int totalPlayers = 0;
     int maxRank = 11;
     int maxSuit = 4;
+    private int extended1 =0;
+    private int extended2 =0;
     private boolean firstrun = true;
     BufferedImage[][] cards = new BufferedImage[maxRank + 1][maxSuit + 1];
     private Pointer firstplayer = new Pointer(142, 432);
@@ -28,6 +30,7 @@ public class BlackJack extends JFrame {
     private JButton betbutton;
     private JButton staybutton;
     private Font pixel;
+    private MoneyLoaderBlackJack moneyloader = new MoneyLoaderBlackJack();
     private int playerplaying = 0;
     private int playertochoose = 0;
     private boolean secondroundplaying = false;
@@ -49,7 +52,7 @@ public class BlackJack extends JFrame {
         setupFont();
         setupMainPanel();
         mainpanel.setLayout(null);
-        SetupButtons();
+
         add(mainpanel);
 
         SetupCards setupCards = new SetupCards();
@@ -58,9 +61,40 @@ public class BlackJack extends JFrame {
     }
     public BlackJack(boolean firstrun) {
         this.firstrun = firstrun;
-       runMainMethod();
 
+       runMainMethod();
+        switch (totalPlayers){
+            case 1:
+                moneyloader.loadmoney(firstrun, players[0].money,extended1, extended2);
+                break;
+                case 2:
+                    moneyloader.loadmoney(firstrun, players[0].money,players[1].money, extended2);
+                    break;
+                    case 3:
+                        moneyloader.loadmoney(firstrun, players[0].money,players[1].money, players[2].money);
+                        break;
+        }
+        SetupButtons();
         new PopUp(this, "How many players are playing?", this);
+        if (firstrun) {
+            moneyloader.loadmoney(true, 0, 0, 0); // actual values are overwritten
+        } else {
+            moneyloader.loadmoney(false, players[0].money, players[1].money, players[2].money);
+        }
+
+// Now read the money values into players
+        switch (playercount) {
+            case 1:
+                moneyloader.moneyread(players[0], null, null);
+                break;
+            case 2:
+                moneyloader.moneyread(players[0], players[1], null);
+                break;
+            case 3:
+                moneyloader.moneyread(players[0], players[1], players[2]);
+                break;
+        }
+        changebetlabeltext();
     }
 
     public void setuppositions() {
@@ -108,8 +142,8 @@ public class BlackJack extends JFrame {
 
     public void SetupButtons() {
         betlabel = buttonSetup.setupbetlabel(pixel, mainpanel);
-        addbet = buttonSetup.setupaddbutton(pixel, mainpanel);
-        lessbet = buttonSetup.setuplessbutton(pixel, mainpanel);
+        addbet = buttonSetup.setupaddbutton(pixel, mainpanel, BlackJack.this);
+        lessbet = buttonSetup.setuplessbutton(pixel, mainpanel, BlackJack.this);
         showinfoLabel = buttonSetup.setupinfolabel(pixel, mainpanel);
         showinfoLabel.setText("Player 1 is betting");
         hitbutton = buttonSetup.setuphitbutton(pixel, mainpanel);
@@ -122,6 +156,7 @@ public class BlackJack extends JFrame {
         mainpanel.add(betbutton);
 
         betbutton.addActionListener(e -> {
+
             if (currentPlayerToBet < totalPlayers) {
                 players[currentPlayerToBet].hasBet = true;
                 players[currentPlayerToBet].phase++;
@@ -134,11 +169,13 @@ public class BlackJack extends JFrame {
                     buttonSetup.changeinfolabel(showinfoLabel, "Player " + (currentPlayerToBet + 1) + " is betting", this);
                 }
             }
+            changebetlabeltext();
             updateability();
             whowins();
         });
 
         hitbutton.addActionListener(e -> {
+
             if (playertochoose < totalPlayers && !players[playertochoose].hashitstay) {
                 players[playertochoose].hit = true;
                 players[playertochoose].stay = false;
@@ -155,6 +192,7 @@ public class BlackJack extends JFrame {
             }
             updateability();
             whowins();
+
         });
 
         staybutton.addActionListener(e -> {
@@ -178,6 +216,7 @@ public class BlackJack extends JFrame {
 
     public void secondround() {
         betbutton.setVisible(false);
+        betlabel.setVisible(false);
         addbet.setVisible(false);
         lessbet.setVisible(false);
         hitbutton.setVisible(true);
@@ -217,8 +256,20 @@ public class BlackJack extends JFrame {
         hitbutton.setEnabled(!players[playertochoose].stay && players[playertochoose].value < 21);
     }
 
+public void changebetlabeltext(){
+    System.out.println("prosloooooooooooooooo");
+    try {
+        if (currentPlayerToBet < totalPlayers) {
+            int currentbet = players[currentPlayerToBet].bet;
 
+            betlabel.setText(String.valueOf(currentbet));
+        }
+    }catch (Exception e){
+        e.printStackTrace();
+    }
+}
     public void changetext(String text) {
+        betlabel.setText(String.valueOf(players[currentPlayerToBet -1].value));
         showinfoLabel.setText(text);
         mainpanel.repaint();
     }
@@ -307,40 +358,21 @@ public class BlackJack extends JFrame {
         mainpanel.repaint();
         roundcounterd++;
     }private void fullResetRound() {
-        dealer.hasBet = false;
-        counter = 0;
-        roundcounter = 1;
-        roundcounterd = 1;
-        playertochoose = 0;
-        currentPlayerToBet = 0;
 
-        for (PlayerState player : players) {
-            player.value = 0;
-            player.hashitstay = false;
-            player.hassecondcard = false;
-            player.hasCard = false;
-            player.hassecondcard = false;
-            player.hasBet = false;
-            player.hit = false;
-            player.stay = false;
-            player.playerisdone = false;
+        switch (totalPlayers){
+            case 1:
+                moneyloader.moneyread(players[0],null, null);
+                break;
+            case 2:
+                moneyloader.moneyread(players[0],players[1], null);
+                break;
+            case 3:
+                moneyloader.moneyread(players[0],players[1], players[2]);
+                break;
         }
-
-        dealer.value = 0;
-        dealer.hasBet = false;
-        dealer.hit = false;
-        dealer.stay = false;
-        dealer.playerisdone = false;
-
-        // Clear all card images from mainpanel
-        mainpanel.removeAll();
-        setupMainPanel(); // Re-add background
-        SetupButtons();   // Re-add buttons
-        mainpanel.repaint();
-        mainpanel = new JPanel();
         BlackJack blackjack = new BlackJack(false);
         BlackJack.this.dispose();
-        changetext("Player 1 is betting");
+
     }
 
     public void whowins(){

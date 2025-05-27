@@ -11,7 +11,7 @@ public class MoneyLoaderBlackJack {
     private int p2 = 0;
     private int p3 = 0;
 
-    public void firstloadmoney(boolean firstrun) {
+    public void loadmoney(boolean firstrun, int p1, int p2, int p3) {
 
         if (firstrun) {
             try {
@@ -55,6 +55,23 @@ public class MoneyLoaderBlackJack {
 
             } catch (Exception e) {
                 System.out.println("Error in MoneyLoaderBlackJack constructor: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader("src/DataSaver"));
+                br.readLine();
+                String line = br.readLine();
+                String[] split = line.split("/");
+                p1 = Integer.parseInt(split[1]);
+                String line2 = br.readLine();
+                String[] split2 = line2.split("/");
+                p2 = Integer.parseInt(split2[1]);
+                String line3 = br.readLine();
+                String[] split3 = line3.split("/");
+                p3 = Integer.parseInt(split3[1]);
+
+            }catch (Exception e) {
                 e.printStackTrace();
             }
         }

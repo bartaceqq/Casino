@@ -3,6 +3,7 @@ public class PlayerState {
     public boolean hasCard = false; // This might be better as a counter for cards dealt
     public int value = 0; // Current score of the player
     public int phase = 0;
+    public int bet = 0;
     public boolean hassecondcard = false;
     public boolean hashitstay = false;
     public boolean hit = false;
