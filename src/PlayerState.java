@@ -7,6 +7,8 @@ public class PlayerState {
     public boolean hashitstay = false;
     public boolean hit = false;
     public boolean stay = false;// Consider removing or refactoring if 'value' is used as card count
+    public boolean playerisdone = false;
+    public int money = 1000;
     public boolean hasthiredcard = false; // Consider removing or refactoring if 'value' is used as card count
     public Pointer position;
 

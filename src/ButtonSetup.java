@@ -36,7 +36,7 @@ public class ButtonSetup {
     }
 
     public JLabel setupbetlabel(Font pixel, JPanel mainpanel) {
-        JLabel betlabel = new JLabel();
+        JLabel betlabel = new JLabel("DEF");
         betlabel.setHorizontalAlignment(SwingConstants.CENTER);
         betlabel.setVerticalAlignment(SwingConstants.CENTER);
         betlabel.setFont(pixel);

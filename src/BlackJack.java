@@ -14,7 +14,7 @@ public class BlackJack extends JFrame {
     private int totalPlayers = 0;
     int maxRank = 11;
     int maxSuit = 4;
-
+    private boolean firstrun = true;
     BufferedImage[][] cards = new BufferedImage[maxRank + 1][maxSuit + 1];
     private Pointer firstplayer = new Pointer(142, 432);
     private Pointer secondplayer = new Pointer(530, 432);
@@ -39,8 +39,7 @@ public class BlackJack extends JFrame {
     public int roundcounter = 1;
     private int roundcounterd = 1;
     private int counter = 0;
-
-    public BlackJack() {
+    public void runMainMethod(){
         setTitle("Black Jack");
         setSize(1200, 800);
         setLocationRelativeTo(null);
@@ -56,6 +55,10 @@ public class BlackJack extends JFrame {
         SetupCards setupCards = new SetupCards();
         setupCards.extractFiles(cards);
         setVisible(true);
+    }
+    public BlackJack(boolean firstrun) {
+        this.firstrun = firstrun;
+       runMainMethod();
 
         new PopUp(this, "How many players are playing?", this);
     }
@@ -131,6 +134,8 @@ public class BlackJack extends JFrame {
                     buttonSetup.changeinfolabel(showinfoLabel, "Player " + (currentPlayerToBet + 1) + " is betting", this);
                 }
             }
+            updateability();
+            whowins();
         });
 
         hitbutton.addActionListener(e -> {
@@ -149,6 +154,7 @@ public class BlackJack extends JFrame {
                 }
             }
             updateability();
+            whowins();
         });
 
         staybutton.addActionListener(e -> {
@@ -195,16 +201,22 @@ public class BlackJack extends JFrame {
             } else {
                 dealer.hit = false;
                 dealer.stay = true;
+                dealer.playerisdone = true;
             }
         } else {
             dealer.hit = false;
             dealer.stay = true;
+            dealer.playerisdone = true;
         }
     }
 
     public void updateability() {
+        boolean isDone = players[playertochoose].stay || players[playertochoose].value >= 21;
+        players[playertochoose].playerisdone = isDone;
+
         hitbutton.setEnabled(!players[playertochoose].stay && players[playertochoose].value < 21);
     }
+
 
     public void changetext(String text) {
         showinfoLabel.setText(text);
@@ -267,7 +279,7 @@ public class BlackJack extends JFrame {
         for (int i = 0; i < players.length; i++) {
             System.out.println("Player " + (i + 1) + " has value: " + players[i].value);
         }
-
+    whowins();
         resetRound();
     }
 
@@ -294,9 +306,58 @@ public class BlackJack extends JFrame {
         mainpanel.add(labeld);
         mainpanel.repaint();
         roundcounterd++;
+    }private void fullResetRound() {
+        dealer.hasBet = false;
+        counter = 0;
+        roundcounter = 1;
+        roundcounterd = 1;
+        playertochoose = 0;
+        currentPlayerToBet = 0;
+
+        for (PlayerState player : players) {
+            player.value = 0;
+            player.hashitstay = false;
+            player.hassecondcard = false;
+            player.hasCard = false;
+            player.hassecondcard = false;
+            player.hasBet = false;
+            player.hit = false;
+            player.stay = false;
+            player.playerisdone = false;
+        }
+
+        dealer.value = 0;
+        dealer.hasBet = false;
+        dealer.hit = false;
+        dealer.stay = false;
+        dealer.playerisdone = false;
+
+        // Clear all card images from mainpanel
+        mainpanel.removeAll();
+        setupMainPanel(); // Re-add background
+        SetupButtons();   // Re-add buttons
+        mainpanel.repaint();
+        mainpanel = new JPanel();
+        BlackJack blackjack = new BlackJack(false);
+        BlackJack.this.dispose();
+        changetext("Player 1 is betting");
     }
 
+    public void whowins(){
+        System.out.println();
+        boolean done = true;
+    for (PlayerState playerstate : players) {
+        if (!playerstate.playerisdone){
+            done = false;
+        }
+    }
+    if (done) {
+        System.out.println("restartttttttttttttttttttttt");
+        fullResetRound();
+        mainpanel.repaint();
+    }
+    }
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(BlackJack::new);
+        BlackJack blackjack = new BlackJack(true);
     }
 }
