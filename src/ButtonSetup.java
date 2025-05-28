@@ -17,6 +17,7 @@ public class ButtonSetup {
         addbet.setVerticalAlignment(SwingConstants.CENTER);
         addbet.setFont(pixel);
         addbet.setBounds(900, 600, 100, 50);
+        System.out.println("add button should be seen");
         addbet.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -24,7 +25,8 @@ public class ButtonSetup {
                 if (blackJack.players[blackJack.currentPlayerToBet].money>0){
                     blackJack.players[blackJack.currentPlayerToBet].money-=50;
                     blackJack.players[blackJack.currentPlayerToBet].bet+=50;
-                    blackJack.changebetlabeltext();
+
+                   blackJack.changebetlabeltext();
                 }
             }
         });
