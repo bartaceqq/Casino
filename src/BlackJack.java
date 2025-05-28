@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Random;
@@ -14,6 +16,8 @@ public class BlackJack extends JFrame {
     private int totalPlayers = 0;
     int maxRank = 11;
     int maxSuit = 4;
+    Timer timer;
+    String[] winners = new String[3];
     private int extended1 =0;
     private int extended2 =0;
     private boolean firstrun = true;
@@ -29,7 +33,9 @@ public class BlackJack extends JFrame {
     private JButton hitbutton;
     private JButton betbutton;
     private JButton staybutton;
+    private JButton continuebutton;
     private Font pixel;
+    JLabel[] moneylabels = new JLabel[3];
     private MoneyLoaderBlackJack moneyloader = new MoneyLoaderBlackJack();
     private int playerplaying = 0;
     private int playertochoose = 0;
@@ -59,11 +65,28 @@ public class BlackJack extends JFrame {
         setupCards.extractFiles(cards);
         setVisible(true);
     }
+    public void updatemoneylabels() {
+        for (int i = 0; i < totalPlayers; i++) {
+            moneylabels[i].setText("Money: $" + players[i].money);
+        }
+        mainpanel.revalidate();
+        mainpanel.repaint();
+    }
+
+
     public BlackJack(boolean firstrun, String title) {
         this.firstrun = firstrun;
         runMainMethod(); // Sets up the JFrame and mainpanel
 
         new PopUp(this, "How many players are playing?", this);
+        moneylabels = buttonSetup.monetlabels(players, totalPlayers, mainpanel);
+        updatemoneylabels();
+        for (JLabel label : moneylabels) {
+            if (label != null) {
+                System.out.println("je tam");
+            }
+        }
+
         System.out.println("is addbutton visible? " + addbet.isVisible());
         // Now read the money values into players
         switch (playercount) { // Assuming playercount is set by the PopUp as well
@@ -86,16 +109,24 @@ public class BlackJack extends JFrame {
         players = new PlayerState[playercount];
 
         switch (playercount) {
-            case 1 -> players[0] = new PlayerState(firstplayer);
-            case 2 -> {
+            case 1:
+                players[0] = new PlayerState(secondplayer);
+                players[0].name = "1";
+                break;
+            case 2:
                 players[0] = new PlayerState(firstplayer);
+                players[0].name = "1";
                 players[1] = new PlayerState(thirdplayer);
-            }
-            case 3 -> {
+                players[1].name = "2";
+            break;
+            case 3:
                 players[0] = new PlayerState(firstplayer);
+                players[0].name = "1";
                 players[1] = new PlayerState(secondplayer);
+                players[1].name = "2";
                 players[2] = new PlayerState(thirdplayer);
-            }
+                players[2].name = "3";
+            break;
         }
 
         dealer = new PlayerState(dealerPosition);
@@ -176,6 +207,7 @@ public class BlackJack extends JFrame {
             changebetlabeltext();
             updateability();
             whowins();
+            updatemoneylabels();
         });
 
         hitbutton.addActionListener(e -> {
@@ -195,6 +227,7 @@ public class BlackJack extends JFrame {
             }
             updateability();
             whowins();
+            updatemoneylabels();
         });
 
         staybutton.addActionListener(e -> {
@@ -213,11 +246,26 @@ public class BlackJack extends JFrame {
                 }
             }
             updateability();
+            whowins();
+            updatemoneylabels();
+
         });
+        continuebutton = new JButton("CONTINUE");
+        continuebutton.setFont(pixel);
+        continuebutton.setHorizontalAlignment(SwingConstants.CENTER);
+        continuebutton.setVerticalAlignment(SwingConstants.CENTER);
+        continuebutton.setBounds(400, 600, 400, 100);
+        continuebutton.addActionListener(e -> {SwingUtilities.invokeLater(() -> {
+            dispose(); // Close current window
+            new BlackJack(false, "BlackJack"); // Open new one
+        });});
+        continuebutton.setVisible(false);
+        mainpanel.add(continuebutton);
     }
 
     public void secondround() {
         betbutton.setVisible(false);
+        betlabel.setVisible(false);
         addbet.setVisible(false);
         lessbet.setVisible(false);
         hitbutton.setVisible(true);
@@ -361,57 +409,19 @@ public class BlackJack extends JFrame {
         mainpanel.repaint();
         roundcounterd++;
     }private void fullResetRound() {
-        System.out.println("fullllllllllllllll resettttttttttttiiiiiiiiiiingggggggggggggg");
-        dealer.hasBet = false;
-        dealer.value = 0;
-        dealer.hit = false;
-        dealer.stay = false;
-        dealer.playerisdone = false;
-
-        counter = 0;
-        roundcounter = 1;
-        roundcounterd = 1;
-        playertochoose = 0;
-        currentPlayerToBet = 0;
-
-        // Reset each player
-        for (PlayerState player : players) {
-            player.value = 0;
-            player.hasCard = false;
-            player.hassecondcard = false;
-            player.hashitstay = false;
-            player.hasBet = false;
-            player.hit = false;
-            player.stay = false;
-            player.playerisdone = false;
-            player.bet = 0;
-        }
-
-        // Reset UI
-        mainpanel.removeAll();
-        setupMainPanel();
-        SetupButtons();
-
-        for (Component c : getContentPane().getComponents()) {
-            if (c instanceof JPanel) {
-                remove(c); // remove old panel if needed
-            }
-        }
-        BlackJack blackJack = new BlackJack(false,"seygex2");
-        BlackJack.this.dispose();
-        add(mainpanel);
-        mainpanel.repaint();
-        mainpanel.revalidate();
-
-        // Refresh money from file (if needed)
-        switch (totalPlayers) {
-            case 1 -> moneyloader.moneyread(players[0], null, null);
-            case 2 -> moneyloader.moneyread(players[0], players[1], null);
-            case 3 -> moneyloader.moneyread(players[0], players[1], players[2]);
-        }
-
-        changetext("Player 1 is betting");
+        // Save money once
+        moneyloader.saveMoney(
+                players[0],
+                totalPlayers > 1 ? players[1] : null,
+                totalPlayers > 2 ? players[2] : null
+        );
+        updatemoneylabels();
+        hitbutton.setVisible(false);
+        staybutton.setVisible(false);
+        // Use Swing thread to avoid concurrency bugs
+        continuebutton.setVisible(true);
     }
+
 
 
     public void whowins() {
@@ -450,8 +460,18 @@ public class BlackJack extends JFrame {
                     System.out.println("Dealer beats player: no payout");
                 }
             }
+            switch (totalPlayers){
+                case 1:
+                    moneyloader.saveMoney(players[0], null, null);
+                    break;
+                    case 2:
+                        moneyloader.saveMoney(players[0], players[1], null);
+                        break;
+                        case 3:
+                            moneyloader.saveMoney(players[0], players[1], players[2]);
+                            break;
+            }
 
-            moneyloader.saveMoney(players[0], players[1], players[2]);
 
             System.out.println("Round finished. Resetting...");
             fullResetRound();

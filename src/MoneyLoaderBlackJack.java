@@ -8,7 +8,7 @@ public class MoneyLoaderBlackJack {
     private int p2 = 0;
     private int p3 = 0;
 
-    public void loadmoney(boolean firstrun, int p1, int p2, int p3) {
+    public void loadmoney(boolean firstrun, Integer p1, Integer p2, Integer p3) {
         if (firstrun) {
             try {
                 File file = new File("src/DataSaver");
@@ -54,16 +54,23 @@ public class MoneyLoaderBlackJack {
         } else {
             try {
                 BufferedReader br = new BufferedReader(new FileReader("src/DataSaver"));
-                br.readLine();
+                br.readLine();  // skip first line
                 String line = br.readLine();
-                String[] split = line.split("/");
-                this.p1 = Integer.parseInt(split[1]);
+                if (line != null) {
+                    String[] split = line.split("/");
+                    if (split.length > 1) this.p1 = Integer.parseInt(split[1]);
+                }
                 String line2 = br.readLine();
-                String[] split2 = line2.split("/");
-                this.p2 = Integer.parseInt(split2[1]);
+                if (line2 != null) {
+                    String[] split2 = line2.split("/");
+                    if (split2.length > 1) this.p2 = Integer.parseInt(split2[1]);
+                }
                 String line3 = br.readLine();
-                String[] split3 = line3.split("/");
-                this.p3 = Integer.parseInt(split3[1]);
+                if (line3 != null) {
+                    String[] split3 = line3.split("/");
+                    if (split3.length > 1) this.p3 = Integer.parseInt(split3[1]);
+                }
+                br.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -76,19 +83,22 @@ public class MoneyLoaderBlackJack {
             br.readLine(); // skip default money line
             while (br.ready()) {
                 String line = br.readLine();
+                if (line == null) continue;
                 String[] split = line.split("/");
+                if (split.length < 2) continue;
                 switch (split[0]) {
                     case "Player1Money":
-                        p1.money = Integer.parseInt(split[1]);
+                        if (p1 != null) p1.money = Integer.parseInt(split[1]);
                         break;
                     case "Player2Money":
-                        p2.money = Integer.parseInt(split[1]);
+                        if (p2 != null) p2.money = Integer.parseInt(split[1]);
                         break;
                     case "Player3Money":
-                        p3.money = Integer.parseInt(split[1]);
+                        if (p3 != null) p3.money = Integer.parseInt(split[1]);
                         break;
                 }
             }
+            br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,11 +113,11 @@ public class MoneyLoaderBlackJack {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("Player1Money")) {
-                    lines.add("Player1Money/" + p1.money);
+                    lines.add(p1 != null ? "Player1Money/" + p1.money : line);
                 } else if (line.startsWith("Player2Money")) {
-                    lines.add("Player2Money/" + p2.money);
+                    lines.add(p2 != null ? "Player2Money/" + p2.money : line);
                 } else if (line.startsWith("Player3Money")) {
-                    lines.add("Player3Money/" + p3.money);
+                    lines.add(p3 != null ? "Player3Money/" + p3.money : line);
                 } else {
                     lines.add(line);
                 }

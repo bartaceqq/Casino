@@ -60,6 +60,41 @@ public class ButtonSetup {
         mainpanel.add(lessbet);
         return lessbet;
     }
+    public JLabel[] monetlabels ( PlayerState[] players, int totalplayers, JPanel mainpanel) {
+        JLabel[] labels = new JLabel[3];
+        int[] xPositions = {100, 500, 900}; // You can adjust these positions
+        int pos1 = 100;
+        int pos2 = 500;
+        int pos3 = 900;
+        int yPosition = 555;
+switch (totalplayers){
+    case 1:
+        xPositions[0] = pos2;
+        xPositions[1] = pos1;
+        xPositions[2] = pos3;
+        break;
+        case 2:
+            xPositions[0] = pos1;
+            xPositions[1] = pos3;
+            xPositions[2] = pos2;
+            break;
+            case 3:
+                xPositions[0] = pos1;
+                xPositions[1] = pos2;
+                xPositions[2] = pos3;
+                break;
+}
+        for (int i = 0; i < totalplayers; i++) {
+            JLabel label = new JLabel("Money: $" + players[i].money);
+            label.setFont(new Font("Arial", Font.BOLD, 24));
+            label.setForeground(Color.YELLOW);
+            label.setBounds(xPositions[i], yPosition, 200, 50);
+            mainpanel.add(label);
+            labels[i] = label; // ✅ Save reference so we can update later
+        }
+        return labels;
+    }
+
 
     public JLabel setupbetlabel(Font pixel, JPanel mainpanel) {
         JLabel betlabel = new JLabel("DEF");
