@@ -10,10 +10,10 @@ import java.util.Random;
 public class BlackJack extends JFrame {
     private JPanel mainpanel;
     public int playercount = 0;
-    private JLabel showinfoLabel;
+    public JLabel showinfoLabel;
     public PlayerState[] players;
     public int currentPlayerToBet = 0;
-    private int totalPlayers = 0;
+    public int totalPlayers = 0;
     int maxRank = 11;
     int maxSuit = 4;
     Timer timer;
@@ -38,7 +38,7 @@ public class BlackJack extends JFrame {
     JLabel[] moneylabels = new JLabel[3];
     private MoneyLoaderBlackJack moneyloader = new MoneyLoaderBlackJack();
     private int playerplaying = 0;
-    private int playertochoose = 0;
+    public int playertochoose = 0;
     private boolean secondroundplaying = false;
     private boolean betted = false;
     ButtonSetup buttonSetup = new ButtonSetup();
@@ -182,85 +182,13 @@ public class BlackJack extends JFrame {
         lessbet = buttonSetup.setuplessbutton(pixel, mainpanel, BlackJack.this);
         showinfoLabel = buttonSetup.setupinfolabel(pixel, mainpanel);
         showinfoLabel.setText("Player 1 is betting");
-        hitbutton = buttonSetup.setuphitbutton(pixel, mainpanel);
-        hitbutton.setVisible(false);
-        staybutton = buttonSetup.setupstaybutton(pixel, mainpanel);
-        staybutton.setVisible(false);
-        betbutton = new JButton("BET");
-        betbutton.setFont(pixel);
-        betbutton.setBounds(500, 700, 200, 50);
-        mainpanel.add(betbutton);
-
-        betbutton.addActionListener(e -> {
-            if (currentPlayerToBet < totalPlayers) {
-                players[currentPlayerToBet].hasBet = true;
-                players[currentPlayerToBet].phase++;
-                System.out.println("Player " + (currentPlayerToBet + 1) + " has bet.");
-                currentPlayerToBet++;
-
-                if (currentPlayerToBet == totalPlayers) {
-                    dealInitialCards(true);
-                } else {
-                    buttonSetup.changeinfolabel(showinfoLabel, "Player " + (currentPlayerToBet + 1) + " is betting", this);
-                }
-            }
-            changebetlabeltext();
-            updateability();
-            whowins();
-            updatemoneylabels();
-        });
-
-        hitbutton.addActionListener(e -> {
-            if (playertochoose < totalPlayers && !players[playertochoose].hashitstay) {
-                players[playertochoose].hit = true;
-                players[playertochoose].stay = false;
-                players[playertochoose].hashitstay = true;
-
-                System.out.println("Player " + (playertochoose + 1) + " chose HIT");
-
-                playertochoose++;
-                if (playertochoose == totalPlayers) {
-                    dealInitialCards(false);
-                } else {
-                    changetext("Player " + (playertochoose + 1) + " is playing");
-                }
-            }
-            updateability();
-            whowins();
-            updatemoneylabels();
-        });
-
-        staybutton.addActionListener(e -> {
-            if (playertochoose < totalPlayers && !players[playertochoose].hashitstay) {
-                players[playertochoose].hit = false;
-                players[playertochoose].stay = true;
-                players[playertochoose].hashitstay = true;
-
-                System.out.println("Player " + (playertochoose + 1) + " chose STAY");
-
-                playertochoose++;
-                if (playertochoose == totalPlayers) {
-                    dealInitialCards(false);
-                } else {
-                    changetext("Player " + (playertochoose + 1) + " is playing");
-                }
-            }
-            updateability();
-            whowins();
-            updatemoneylabels();
-
-        });
-        continuebutton = new JButton("CONTINUE");
-        continuebutton.setFont(pixel);
-        continuebutton.setHorizontalAlignment(SwingConstants.CENTER);
-        continuebutton.setVerticalAlignment(SwingConstants.CENTER);
-        continuebutton.setBounds(400, 600, 400, 100);
-        continuebutton.addActionListener(e -> {SwingUtilities.invokeLater(() -> {
-            dispose(); // Close current window
-            new BlackJack(false, "BlackJack"); // Open new one
-        });});
-        continuebutton.setVisible(false);
-        mainpanel.add(continuebutton);
+       betbutton = buttonSetup.setupbetbutton(pixel, mainpanel, BlackJack.this);
+       mainpanel.add(betbutton);
+        hitbutton = buttonSetup.setuphitbuttonek(pixel, mainpanel, BlackJack.this);
+        mainpanel.add(hitbutton);
+        staybutton = buttonSetup.setupstaybuttonek(pixel, mainpanel, BlackJack.this);
+        mainpanel.add(staybutton);
+       continuebutton =buttonSetup.setupcontinuebuttonek(pixel, mainpanel, BlackJack.this);
     }
 
     public void secondround() {
@@ -325,7 +253,7 @@ public class BlackJack extends JFrame {
         mainpanel.repaint();
     }
 
-    private void dealInitialCards(boolean betting) {
+    public void dealInitialCards(boolean betting) {
         counter++;
         playertochoose = 0;
 

@@ -105,7 +105,96 @@ switch (totalplayers){
         mainpanel.add(betlabel);
         return betlabel;
     }
+    public JButton setupbetbutton(Font pixel, JPanel mainpanel, BlackJack blackJack) {
+        JButton betbutton = new JButton("BET");
+        betbutton.setFont(pixel);
+        betbutton.setBounds(500, 700, 200, 50);
+        betbutton.addActionListener(e -> {
+            if (blackJack.currentPlayerToBet < blackJack.totalPlayers) {
+                blackJack.players[blackJack.currentPlayerToBet].hasBet = true;
+                blackJack.players[blackJack.currentPlayerToBet].phase++;
+                System.out.println("Player " + (blackJack.currentPlayerToBet + 1) + " has bet.");
+                blackJack.currentPlayerToBet++;
 
+                if (blackJack.currentPlayerToBet == blackJack.totalPlayers) {
+                    blackJack.dealInitialCards(true);
+                } else {
+                    blackJack.buttonSetup.changeinfolabel(blackJack.showinfoLabel, "Player " + (blackJack.currentPlayerToBet + 1) + " is betting", blackJack);
+                }
+            }
+            blackJack.changebetlabeltext();
+            blackJack.updateability();
+            blackJack.whowins();
+            blackJack.updatemoneylabels();
+        });
+        return betbutton;
+    }
+    public JButton setuphitbuttonek(Font pixel, JPanel mainpanel, BlackJack blackJack) {
+        JButton hitbutton = new JButton("BET");
+        hitbutton = setuphitbutton(pixel, mainpanel);
+        hitbutton.setVisible(false);
+        hitbutton.addActionListener(e -> {
+            if (blackJack.playertochoose < blackJack.totalPlayers && !blackJack.players[blackJack.playertochoose].hashitstay) {
+                blackJack.players[blackJack.playertochoose].hit = true;
+                blackJack.players[blackJack.playertochoose].stay = false;
+                blackJack.players[blackJack.playertochoose].hashitstay = true;
+
+                System.out.println("Player " + (blackJack.playertochoose + 1) + " chose HIT");
+
+                blackJack.playertochoose++;
+                if (blackJack.playertochoose == blackJack.totalPlayers) {
+                    blackJack.dealInitialCards(false);
+                } else {
+                    blackJack.changetext("Player " + (blackJack.playertochoose + 1) + " is playing");
+                }
+            }
+            blackJack.updateability();
+            blackJack.whowins();
+            blackJack.updatemoneylabels();
+        });
+        return hitbutton;
+    }
+
+    public JButton setupstaybuttonek(Font pixel, JPanel mainpanel, BlackJack blackJack) {
+        JButton staybutton = new JButton("BET");
+        staybutton = setupstaybutton(pixel, mainpanel);
+        staybutton.setVisible(false);
+        staybutton.addActionListener(e -> {
+            if (blackJack.playertochoose < blackJack.totalPlayers && !blackJack.players[blackJack.playertochoose].hashitstay) {
+                blackJack.players[blackJack.playertochoose].hit = false;
+                blackJack.players[blackJack.playertochoose].stay = true;
+                blackJack.players[blackJack.playertochoose].hashitstay = true;
+
+                System.out.println("Player " + (blackJack.playertochoose + 1) + " chose STAY");
+
+                blackJack.playertochoose++;
+                if (blackJack.playertochoose == blackJack.totalPlayers) {
+                    blackJack.dealInitialCards(false);
+                } else {
+                    blackJack.changetext("Player " + (blackJack.playertochoose + 1) + " is playing");
+                }
+            }
+            blackJack.updateability();
+            blackJack.whowins();
+            blackJack.updatemoneylabels();
+
+        });
+        return staybutton;
+    }
+    public JButton setupcontinuebuttonek(Font pixel, JPanel mainpanel, BlackJack blackJack) {
+        JButton continuebutton = new JButton("CONTINUE");
+        continuebutton.setFont(pixel);
+        continuebutton.setHorizontalAlignment(SwingConstants.CENTER);
+        continuebutton.setVerticalAlignment(SwingConstants.CENTER);
+        continuebutton.setBounds(400, 600, 400, 100);
+        continuebutton.addActionListener(e -> {SwingUtilities.invokeLater(() -> {
+            blackJack.dispose(); // Close current window
+            new BlackJack(false, "BlackJack"); // Open new one
+        });});
+        continuebutton.setVisible(false);
+        mainpanel.add(continuebutton);
+        return continuebutton;
+    }
     public JLabel setupinfolabel(Font pixel, JPanel mainpanel) {
         JLabel infolabel = new JLabel("INFO");
         infolabel.setHorizontalAlignment(SwingConstants.CENTER);

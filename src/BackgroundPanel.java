@@ -7,6 +7,9 @@ public class BackgroundPanel extends JPanel {
     public BackgroundPanel(String imagePath) {
         // Load the image
         backgroundImage = new ImageIcon(imagePath).getImage();
+        if (backgroundImage == null) {
+            System.out.println("Background image is null");
+        }
         // Optional: set size of panel to image size
         this.setPreferredSize(new Dimension(backgroundImage.getWidth(null), backgroundImage.getHeight(null)));
     }
