@@ -1,3 +1,10 @@
+package SlotsPck;
+
+import BackGroundPanel.BackgroundPanel;
+import MainMenicko.MainMenu;
+import MoneyLoaders.MainMoneyLoader;
+import PopUp.PopUp;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,15 +12,28 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.io.File;
-import java.io.IOException;
 
+/**
+ * Represents the Slots game JFrame.
+ * <p>
+ * This class manages the Slots GUI including slot machines, betting controls,
+ * money management, and spin functionality. It handles the UI layout,
+ * user interactions, and updating the display.
+ * </p>
+ */
 public class Slots extends JFrame {
+    /** Map of SlotMachine components to their respective IDs */
     HashMap<SlotMachine, Integer> slotlist = new HashMap<>();
     private JButton spinbutton;
+    /** Flag to indicate if payout lines should be drawn */
     public boolean drawline = false;
     JPanel mainpanel;
+    /** Player's current money */
     int money = 1000;
+    private JButton exitbutton;
+    /** Current payout amount */
     public int payout = 0;
+    /** Current bet amount */
     public int bet = 0;
     CheckIfMatch checkifmatch = new CheckIfMatch(Slots.this);
     ArrayList<Point[]> pointlist = new ArrayList<>();
@@ -22,31 +42,37 @@ public class Slots extends JFrame {
     JLabel betlabel = new JLabel();
     JLabel moneylabel = new JLabel();
     Font pixelFont;
+    MainMoneyLoader mainMoneyLoader = new MainMoneyLoader();
 
+    /**
+     * Constructs the Slots JFrame.
+     * Initializes money, fonts, UI components, and event handlers.
+     */
     public Slots() {
+        money = mainMoneyLoader.loadMoney();
         try {
-
-
-            //chat
+            // Load custom pixel font
             pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Images/Slots/Jersey10-Regular.ttf"))
-                    .deriveFont(80f); // Set the font size (can be smaller/larger as needed)
-
-            // Register the font
+                    .deriveFont(80f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(pixelFont);
-            //konec chata
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // Disable the default close operation (X button)
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setUpMainThings();
         addSlots();
         spinButttonSetup();
         setupbetpart();
+        setupexitbutton();
     }
 
+    /**
+     * Sets up main JFrame properties and initializes the main panel with background.
+     */
     public void setUpMainThings() {
-        this.setTitle("Slots");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle("SlotsPck.Slots");
         this.setSize(1200, 800);
         this.setResizable(false);
 
@@ -57,11 +83,18 @@ public class Slots extends JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * Adds the payout amount to the player's money and updates the money label.
+     */
     public void addmoney() {
         money += payout;
         moneylabel.setText("$" + money);
     }
 
+    /**
+     * Adds slot machine components to the main panel arranged in rows and columns.
+     * Each slot machine is assigned an ID and positioned accordingly.
+     */
     public void addSlots() {
         int startX = 160;
         int width = 200;
@@ -81,15 +114,44 @@ public class Slots extends JFrame {
             slot.setBounds(x, y, width, height);
             slotlist.put(slot, i);
             mainpanel.add(slot);
-
         }
     }
 
+    /**
+     * Sets up the exit button which saves the player's money and returns to the main menu.
+     */
+    public void setupexitbutton() {
+        exitbutton = new JButton("Exit");
+        exitbutton.setFont(pixelFont);
+        exitbutton.setBounds(1050, 0, 150, 100);
+        exitbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainMoneyLoader mainMoneyLoader = new MainMoneyLoader();
+                mainMoneyLoader.savemoney(money);
+                MainMenu mainmenu = new MainMenu();
+                Slots.this.dispose();
+            }
+        });
+        mainpanel.add(exitbutton);
+    }
+
+    /**
+     * Clears the current payout line points and adds new ones for drawing.
+     *
+     * @param points List of Point arrays representing payout lines.
+     */
     public void addpoints(ArrayList<Point[]> points) {
         pointlist.clear();
         pointlist.addAll(points);
     }
 
+    /**
+     * Paints the payout lines if drawline is enabled.
+     * Draws red lines between consecutive points in the point list.
+     *
+     * @param g Graphics context.
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -109,6 +171,9 @@ public class Slots extends JFrame {
         }
     }
 
+    /**
+     * Sets up the label showing the player's current money.
+     */
     public void setupmoneylabel() {
         moneylabel.setFont(pixelFont);
         moneylabel.setText("$" + money);
@@ -118,6 +183,9 @@ public class Slots extends JFrame {
         moneylabel.setBounds(600, -50, 400, 200);
     }
 
+    /**
+     * Sets up the spin button including icon, appearance, and click behavior.
+     */
     public void spinButttonSetup() {
         spinbutton = new JButton();
         ImageIcon spinicon = new ImageIcon("src/Images/Slots/SpinButton.png");
@@ -130,8 +198,10 @@ public class Slots extends JFrame {
         setupspinbuttonfunction();
     }
 
+    /**
+     * Adds an action listener to the spin button to start spinning the slots if conditions are met.
+     */
     public void setupspinbuttonfunction() {
-
         spinbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -141,27 +211,27 @@ public class Slots extends JFrame {
                         can = false;
                     }
                 }
-                if (can == true) {
+                if (can) {
                     if (bet <= money) {
                         drawline = false;
                         payout = 0;
                         money -= bet;
                         moneylabel.setText("$" + money);
                         for (SlotMachine slot : slotlist.keySet()) {
-
                             slot.Spin();
                         }
                     } else {
                         new PopUp(Slots.this, "U ARE TRYING TO BET MORE THAN YOU HAVE", null);
-
                     }
                 }
             }
         });
         spinbutton.addMouseListener(new Hovering());
-
     }
 
+    /**
+     * Configures the "+" bet button appearance and behavior.
+     */
     public void setupplus() {
         plusbet.setBounds(520, 30, 100, 50);
         ImageIcon plusbeticon = new ImageIcon("src/Images/Slots/plus.png");
@@ -169,13 +239,13 @@ public class Slots extends JFrame {
         plusbet.setContentAreaFilled(false);
         plusbet.setBorderPainted(false);
         plusbet.setFocusPainted(false);
-        /*
-        plusbet.addMouseListener(new SecHovering(1, betlabel));
-        */
 
         plusbet.addActionListener(new BetHandle(1, betlabel, Slots.this));
     }
 
+    /**
+     * Configures the "-" bet button appearance and behavior.
+     */
     public void setupminus() {
         minusbet.setBounds(180, 30, 100, 50);
         ImageIcon minusbeticon = new ImageIcon("src/Images/Slots/minus.png");
@@ -183,13 +253,13 @@ public class Slots extends JFrame {
         minusbet.setContentAreaFilled(false);
         minusbet.setBorderPainted(false);
         minusbet.setFocusPainted(false);
-        /*
-        minusbet.addMouseListener(new SecHovering(2, betlabel));
-        */
 
         minusbet.addActionListener(new BetHandle(2, betlabel, Slots.this));
     }
 
+    /**
+     * Sets up the label that displays the current bet amount.
+     */
     public void setupbetlabel() {
         betlabel.setFont(pixelFont);
         betlabel.setText("0");
@@ -199,6 +269,9 @@ public class Slots extends JFrame {
         betlabel.setBounds(210, -50, 400, 200);
     }
 
+    /**
+     * Sets up all bet-related controls (plus, minus buttons and bet label).
+     */
     public void setupbetpart() {
         setupplus();
         mainpanel.add(plusbet);
@@ -210,6 +283,11 @@ public class Slots extends JFrame {
         mainpanel.add(moneylabel);
     }
 
+    /**
+     * Main method to launch the Slots game UI.
+     *
+     * @param args command line arguments (not used).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Slots::new);
     }

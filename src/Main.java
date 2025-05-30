@@ -1,8 +1,7 @@
-import javax.swing.*;
-
+import RouletPck.Components;
+import MainMenicko.MainMenu;
 public class Main {
     public static void main(String[] args) {
-        Components components = new Components();
-       
+        MainMenu mainMenu = new MainMenu();
     }
 }

@@ -1,7 +1,14 @@
+package SlotsPck;
+
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 
+/**
+ * Class responsible for checking matching patterns in a slot machine grid.
+ * It detects vertical, horizontal, and diagonal matches of three or more identical symbols,
+ * calculates payouts, and triggers visual effects in the Slots game.
+ */
 public class CheckIfMatch {
     private final SlotMachine[][] field = new SlotMachine[4][6];
     private final ArrayList<SlotMachine> slotlist = new ArrayList<>();
@@ -9,10 +16,21 @@ public class CheckIfMatch {
     private final ArrayList<Point[]> allpoints = new ArrayList<>();
     public int total;
 
+    /**
+     * Constructs a CheckIfMatch object associated with a given Slots instance.
+     *
+     * @param slots The Slots game instance to interact with.
+     */
     public CheckIfMatch(Slots slots) {
         this.slots = slots;
     }
 
+    /**
+     * Adds a SlotMachine instance to the internal list for match checking.
+     * Once 15 slots are added, it triggers the matching logic.
+     *
+     * @param slotmachine The SlotMachine object to add.
+     */
     public void addtocounter(SlotMachine slotmachine) {
         slotlist.add(slotmachine);
         if (slotlist.size() == 15) {
@@ -20,6 +38,9 @@ public class CheckIfMatch {
         }
     }
 
+    /**
+     * Copies collected slots into a 2D grid representation and initiates the match checking process.
+     */
     private void addintogrid() {
         for (SlotMachine slot : slotlist) {
             field[slot.row][slot.col] = slot;
@@ -27,6 +48,11 @@ public class CheckIfMatch {
         checkit();
     }
 
+    /**
+     * Checks for matches in vertical, horizontal, and diagonal directions.
+     * Calculates payouts accordingly, triggers line drawing effects,
+     * and updates the Slots game state.
+     */
     private void checkit() {
         boolean found = false;
 
@@ -84,7 +110,7 @@ public class CheckIfMatch {
             }
         }
 
-        // Diagonal ↘
+        // Diagonal ↘ matches (3+)
         for (int row = 0; row <= 1; row++) {
             for (int col = 0; col <= 2; col++) {
                 ArrayList<SlotMachine> match = new ArrayList<>();
@@ -105,7 +131,7 @@ public class CheckIfMatch {
             }
         }
 
-        // Diagonal ↙
+        // Diagonal ↙ matches (3+)
         for (int row = 0; row <= 1; row++) {
             for (int col = 3; col < 6; col++) {
                 ArrayList<SlotMachine> match = new ArrayList<>();
@@ -130,7 +156,7 @@ public class CheckIfMatch {
             System.out.println("No matches found.");
         }
 
-        // ✅ Final payout logic after all matches
+        // Finalize payout and update Slots instance
         slots.addpoints(allpoints);
         slots.payout = total;
         slots.addmoney();
@@ -141,6 +167,13 @@ public class CheckIfMatch {
         allpoints.clear();
     }
 
+    /**
+     * Draws a vertical match line on the slot grid.
+     *
+     * @param endRow The last row of the match.
+     * @param col The column where the match occurred.
+     * @param count The number of matched slots.
+     */
     private void drawVerticalMatch(int endRow, int col, int count) {
         SlotMachine[] match = new SlotMachine[count];
         for (int i = 0; i < count; i++) {
@@ -149,6 +182,13 @@ public class CheckIfMatch {
         drawMatchLine(match);
     }
 
+    /**
+     * Draws a horizontal match line on the slot grid.
+     *
+     * @param row The row where the match occurred.
+     * @param endCol The last column of the match.
+     * @param count The number of matched slots.
+     */
     private void drawHorizontalMatch(int row, int endCol, int count) {
         SlotMachine[] match = new SlotMachine[count];
         for (int i = 0; i < count; i++) {
@@ -157,6 +197,11 @@ public class CheckIfMatch {
         drawMatchLine(match);
     }
 
+    /**
+     * Records the points for matched slots and triggers repaint for visual effects.
+     *
+     * @param slotsToMatch The slots involved in the match.
+     */
     private void drawMatchLine(SlotMachine... slotsToMatch) {
         ArrayList<Point> points = new ArrayList<>();
         for (SlotMachine s : slotsToMatch) {
@@ -169,6 +214,12 @@ public class CheckIfMatch {
         slots.repaint();
     }
 
+    /**
+     * Converts the center point of a SlotMachine component to the coordinate space of the Slots container.
+     *
+     * @param slot The SlotMachine component.
+     * @return The converted center point relative to the Slots container.
+     */
     private Point convertToFrameCenter(SlotMachine slot) {
         if (slot != null) {
             return SwingUtilities.convertPoint(
@@ -180,6 +231,9 @@ public class CheckIfMatch {
         return null;
     }
 
+    /**
+     * Clears the internal grid of SlotMachine references.
+     */
     private void clearGrid() {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {

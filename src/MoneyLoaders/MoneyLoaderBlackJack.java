@@ -1,13 +1,33 @@
+package MoneyLoaders;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import BlackJackPck.PlayerState;
 
+/**
+ * Handles loading and saving player money data for the Blackjack game.
+ * Reads from and writes to a data file to persist player money between sessions.
+ */
 public class MoneyLoaderBlackJack {
+
     private int playerdef = 0;
     private int p1 = 0;
     private int p2 = 0;
     private int p3 = 0;
 
+    /**
+     * Loads money values for players from the data file.
+     *
+     * If this is the first run, it initializes all player money values to the default
+     * money amount found in the file and saves them back.
+     * Otherwise, it reads the current money values for players 1 to 3.
+     *
+     * @param firstrun true if the game is starting fresh and players should be set to default money
+     * @param p1 Initial money value for player 1 (not used in method, consider refactoring)
+     * @param p2 Initial money value for player 2 (not used in method)
+     * @param p3 Initial money value for player 3 (not used in method)
+     */
     public void loadmoney(boolean firstrun, Integer p1, Integer p2, Integer p3) {
         if (firstrun) {
             try {
@@ -21,6 +41,7 @@ public class MoneyLoaderBlackJack {
                 }
                 br.close();
 
+                // Find the default player money line
                 for (String l : lines) {
                     if (l.startsWith("PlayerDefMoney")) {
                         playerdef = Integer.parseInt(l.split("/")[1]);
@@ -28,8 +49,8 @@ public class MoneyLoaderBlackJack {
                     }
                 }
 
+                // Overwrite player money lines with default money
                 BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-
                 for (String l : lines) {
                     if (l.startsWith("Player1Money")) {
                         l = "Player1Money/" + playerdef;
@@ -44,17 +65,16 @@ public class MoneyLoaderBlackJack {
                     bw.write(l);
                     bw.newLine();
                 }
-
                 bw.close();
 
             } catch (Exception e) {
-                System.out.println("Error in MoneyLoaderBlackJack constructor: " + e.getMessage());
+                System.out.println("Error in MoneyLoaders.MoneyLoaderBlackJack constructor: " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
             try {
                 BufferedReader br = new BufferedReader(new FileReader("src/DataSaver"));
-                br.readLine();  // skip first line
+                br.readLine();  // skip first line (default money)
                 String line = br.readLine();
                 if (line != null) {
                     String[] split = line.split("/");
@@ -77,6 +97,13 @@ public class MoneyLoaderBlackJack {
         }
     }
 
+    /**
+     * Reads the player money values from the data file and sets them into the provided PlayerState objects.
+     *
+     * @param p1 PlayerState object for player 1 (can be null if player does not exist)
+     * @param p2 PlayerState object for player 2 (can be null)
+     * @param p3 PlayerState object for player 3 (can be null)
+     */
     public void moneyread(PlayerState p1, PlayerState p2, PlayerState p3) {
         try {
             BufferedReader br = new BufferedReader(new FileReader("src/DataSaver"));
@@ -104,7 +131,14 @@ public class MoneyLoaderBlackJack {
         }
     }
 
-    // NEW METHOD TO SAVE MONEY
+    /**
+     * Saves the current money values of the players into the data file.
+     * Updates only the player money lines, leaving other data intact.
+     *
+     * @param p1 PlayerState object for player 1 (can be null)
+     * @param p2 PlayerState object for player 2 (can be null)
+     * @param p3 PlayerState object for player 3 (can be null)
+     */
     public void saveMoney(PlayerState p1, PlayerState p2, PlayerState p3) {
         try {
             File file = new File("src/DataSaver");
@@ -135,5 +169,4 @@ public class MoneyLoaderBlackJack {
             e.printStackTrace();
         }
     }
-
 }
