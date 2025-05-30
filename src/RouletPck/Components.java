@@ -265,7 +265,7 @@ public class Components {
      * @param filename the name of the file.
      * @return the extracted number or -1 if no valid number is found.
      */
-    private int extractNumber(String filename) {
+    public int extractNumber(String filename) {
         try {
             String num = filename.replaceAll("[^\\d]", "");
             return Integer.parseInt(num);

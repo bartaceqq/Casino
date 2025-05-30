@@ -220,7 +220,7 @@ public class CheckIfMatch {
      * @param slot The SlotMachine component.
      * @return The converted center point relative to the Slots container.
      */
-    private Point convertToFrameCenter(SlotMachine slot) {
+    public Point convertToFrameCenter(SlotMachine slot) {
         if (slot != null) {
             return SwingUtilities.convertPoint(
                     slot,

@@ -68,7 +68,7 @@ public class SetupCards {
      * @param fileName The card file name without extension (e.g., "2", "A", "J").
      * @return The integer rank used in the cards array, or -1 if invalid.
      */
-    private int getRankNumber(String fileName) {
+    public int getRankNumber(String fileName) {
         switch (fileName) {
             case "A":
                 return 11;
