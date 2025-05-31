@@ -25,6 +25,7 @@ public class SetupCards {
      *              Suit is from 1 to 4 (Clubs=1, Diamonds=2, Hearts=3, Spades=4).
      */
     public void extractFiles(BufferedImage[][] cards) {
+        //this part is made by chat cuz i never like extracted folder and files in it so I did not know how to do it but its not that hard acutally
         String[] suits = {"C", "D", "H", "S"};
         String basePath = "src/images/BlackJack/Cards/";
 
@@ -38,7 +39,7 @@ public class SetupCards {
             if (files != null) {
                 // Sort files alphabetically for consistent loading order
                 Arrays.sort(files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
-
+//end of chat part
                 for (File file : files) {
                     String fileName = file.getName().replace(".png", "");
                     int rankNumber = getRankNumber(fileName);

@@ -161,6 +161,7 @@ public class Roulette extends JFrame {
         panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
+                //chat
                 super.paintComponent(g);
                 if (image == null) return;
                 Graphics2D g2d = (Graphics2D) g;
@@ -174,8 +175,10 @@ public class Roulette extends JFrame {
                 at.translate(imgX, imgY);
                 g2d.drawImage(image, at, null);
                 g2d.drawImage(arrow, 750, 200, 100, 200, null);
+                //chat
             }
         };
+
         panel.setBounds(0, 0, 1200, 1000);
         panel.setBackground(Color.decode("#008000"));
         panel.setLayout(null);

@@ -18,6 +18,7 @@ public class CardDealing {
      * @param betting    True if this is the betting phase, false if it's during the hit/stay phase.
      * @param blackJack  The main BlackJack game object containing state and UI elements.
      */
+
     public void dealInitialCards(boolean betting, BlackJack blackJack) {
         blackJack.counter++;
         blackJack.playertochoose = 0;
@@ -33,6 +34,7 @@ public class CardDealing {
         }
 
         for (int i = 0; i < blackJack.players.length; i++) {
+            //chat
             int rawRank = (int) (Math.random() * 13) + 1;
             int rank = (rawRank == 1) ? 11 : (rawRank >= 11) ? 10 : rawRank;
             int suit = (int) (Math.random() * 4) + 1;
@@ -65,7 +67,7 @@ public class CardDealing {
             } else {
                 continue;
             }
-
+            //end of chat
             blackJack.roundcounter++;
             blackJack.mainpanel.add(label);
             blackJack.mainpanel.repaint();
@@ -84,6 +86,7 @@ public class CardDealing {
      *
      * @param blackJack The main BlackJack game object containing state and UI elements.
      */
+    //this method i made by myself but i copy pasted some parts from dealInitalCard that were made form chat
     public void dealCardToDealer(BlackJack blackJack) {
         int rawRankd = (int) (Math.random() * 13) + 1;
         int rankd = (rawRankd == 1) ? 11 : (rawRankd >= 11) ? 10 : rawRankd;
@@ -117,11 +120,13 @@ public class CardDealing {
      * @param mainMoneyLoader  The object responsible for saving money data.
      */
     public void fullResetRound(BlackJack blackJack, MoneyLoaderBlackJack mainMoneyLoader) {
+        //chat
         mainMoneyLoader.saveMoney(
                 blackJack.players[0],
                 blackJack.totalPlayers > 1 ? blackJack.players[1] : null,
                 blackJack.totalPlayers > 2 ? blackJack.players[2] : null
         );
+        //chat
         blackJack.updatemoneylabels();
         blackJack.hitbutton.setVisible(false);
         blackJack.staybutton.setVisible(false);

@@ -95,7 +95,7 @@ public class SlotMachine extends JPanel {
                 thenumber = randomIndex;
 
                 // Stop spinning after ~3 seconds (60 * 10ms)
-                if (timertime >= 300) {
+                if (timertime >= 50) {
                     timer.stop();
                     spinning = false;
 

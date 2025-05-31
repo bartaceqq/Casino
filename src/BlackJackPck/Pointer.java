@@ -6,6 +6,7 @@ import java.awt.*;
  * A specialized Point class representing the position of a pointer in a Blackjack game,
  * with additional flags indicating whether specific cards have been dealt.
  */
+//this whole class is like idea from the chat but i did it by myself
 public class Pointer extends Point {
 
     /**

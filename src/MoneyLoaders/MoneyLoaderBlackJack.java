@@ -73,6 +73,7 @@ public class MoneyLoaderBlackJack {
             }
         } else {
             try {
+                //chat
                 BufferedReader br = new BufferedReader(new FileReader("src/DataSaver"));
                 br.readLine();  // skip first line (default money)
                 String line = br.readLine();
@@ -91,6 +92,7 @@ public class MoneyLoaderBlackJack {
                     if (split3.length > 1) this.p3 = Integer.parseInt(split3[1]);
                 }
                 br.close();
+                //end of chat
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -145,6 +147,7 @@ public class MoneyLoaderBlackJack {
             BufferedReader br = new BufferedReader(new FileReader(file));
             List<String> lines = new ArrayList<>();
             String line;
+            //chat
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("Player1Money")) {
                     lines.add(p1 != null ? "Player1Money/" + p1.money : line);
@@ -157,7 +160,7 @@ public class MoneyLoaderBlackJack {
                 }
             }
             br.close();
-
+            //end of chat
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
             for (String l : lines) {
                 bw.write(l);

@@ -88,10 +88,11 @@ public class ButtonSetup {
      */
     public JLabel[] monetlabels(PlayerState[] players, int totalplayers, JPanel mainpanel) {
         JLabel[] labels = new JLabel[3];
+        //chat idea
         int[] xPositions = {100, 500, 900};
         int pos1 = 100, pos2 = 500, pos3 = 900;
         int yPosition = 555;
-
+        //end of idea
         switch (totalplayers) {
             case 1 -> {
                 xPositions[0] = pos2;

@@ -53,10 +53,14 @@ public class CheckIfMatch {
      * Calculates payouts accordingly, triggers line drawing effects,
      * and updates the Slots game state.
      */
+    /**
+     * the checking methods are made part by me part by chat, i always created the method (checking system) and i awas always missing some small part in it and chatt added it
+     */
     private void checkit() {
         boolean found = false;
 
         // Vertical matches (3+)
+
         for (int col = 0; col < 6; col++) {
             int count = 1;
             for (int row = 1; row < 4; row++) {
@@ -202,6 +206,7 @@ public class CheckIfMatch {
      *
      * @param slotsToMatch The slots involved in the match.
      */
+    //chat method
     private void drawMatchLine(SlotMachine... slotsToMatch) {
         ArrayList<Point> points = new ArrayList<>();
         for (SlotMachine s : slotsToMatch) {
@@ -221,6 +226,7 @@ public class CheckIfMatch {
      * @return The converted center point relative to the Slots container.
      */
     public Point convertToFrameCenter(SlotMachine slot) {
+        //chat
         if (slot != null) {
             return SwingUtilities.convertPoint(
                     slot,

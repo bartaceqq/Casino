@@ -96,6 +96,7 @@ public class Slots extends JFrame {
      * Each slot machine is assigned an ID and positioned accordingly.
      */
     public void addSlots() {
+        //chat
         int startX = 160;
         int width = 200;
         int height = 300;

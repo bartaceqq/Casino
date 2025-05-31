@@ -25,15 +25,12 @@ public class FramePopUpSmallRes extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(300, 200);
         this.setLocationRelativeTo(null); // Center on screen
-
-        // Create a JLabel with the warning message, centered horizontally and vertically
         JLabel messageLabel = new JLabel(
-                "<html><div style='text-align: center;'>Your resolution is too small.<br>" +
-                        "Please change it to at least 1200 x 800.</div></html>",
+                "Your resolution is too small.<br>" +
+                        "Please change it to at least 1200 x 800.",
                 SwingConstants.CENTER
         );
         messageLabel.setFont(pixelFont);
-        // Use a layout that centers the label both horizontally and vertically
         this.setLayout(new GridBagLayout());
         this.add(messageLabel);
         this.setVisible(true);

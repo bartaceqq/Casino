@@ -231,6 +231,7 @@ public class BlackJack extends JFrame {
     /**
      * Loads and registers the pixel font used in UI labels and buttons.
      */
+    //chat
     public void setupFont() {
         try {
             pixel = Font.createFont(Font.TRUETYPE_FONT, new File("src/Images/Slots/Jersey10-Regular.ttf")).deriveFont(80f);
@@ -318,6 +319,7 @@ public class BlackJack extends JFrame {
     /**
      * Updates hit/stay button ability based on current player's state.
      */
+    //chat
     public void updateability() {
         boolean isDone = players[playertochoose].stay || players[playertochoose].value >= 21;
         players[playertochoose].playerisdone = isDone;
