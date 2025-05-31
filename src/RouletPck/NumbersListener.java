@@ -35,7 +35,7 @@ public class NumbersListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JButton source = (JButton) e.getSource();
         int number = roulette.buttons.get(source);
-        roulette.selectedNumber = number; // store selected number
+        roulette.selectedNumber = number;
         roulette.betpanel.setVisible(true);
     }
 }

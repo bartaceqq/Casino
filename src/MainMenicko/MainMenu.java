@@ -26,20 +26,10 @@ public class MainMenu extends JFrame {
         this.setSize(1200, 800);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-
-        // Initialize the main panel with a background image
         mainPanel = new BackgroundPanel("src/Images/MainBackground.png");
-
-        // Set panel background color to black (can be overridden by image)
         mainPanel.setBackground(Color.BLACK);
-
-        // Add mouse listener to handle interactions on the main panel
         mainPanel.addMouseListener(new MainPanelList(MainMenu.this));
-
-        // Add the panel to the JFrame
         this.add(mainPanel);
-
-        // Make the window visible
         this.setVisible(true);
     }
 

@@ -13,7 +13,6 @@ public class FramePopUpSmallRes extends JFrame {
      */
     public FramePopUpSmallRes() {
         try {
-// Load custom pixel font
             pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Images/Slots/Jersey10-Regular.ttf"))
                     .deriveFont(20f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

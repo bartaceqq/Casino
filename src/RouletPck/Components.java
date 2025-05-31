@@ -111,8 +111,6 @@ public class Components {
         for (int num : redNumbers) {
             map.put(num, false); // red = false
         }
-
-        // 0 is green; no assignment made here
     }
 
     /**
@@ -158,13 +156,13 @@ public class Components {
                 System.out.println("BLACKBETIK  " + blackbet);
                 return currentMoney + (int) (blackbet * 1.7);
             } else {
-                return currentMoney; // loss
+                return currentMoney;
             }
         } else {
             if (!map.getOrDefault(winningnumber, true)) {
                 return currentMoney + (int) (redbet * 1.7);
             } else {
-                return currentMoney; // loss
+                return currentMoney;
             }
         }
     }
@@ -179,7 +177,7 @@ public class Components {
      */
     public void addbuttons(JPanel panel, HashMap<JButton, Integer> buttons, Roulette roulette) {
 
-        // Zero button setup
+        //zero
         JButton zero = new JButton("");
         zero.setOpaque(false);
         zero.setContentAreaFilled(false);
@@ -190,8 +188,7 @@ public class Components {
         zero.setIcon(icon);
         panel.add(zero);
         buttons.put(zero, 0);
-
-        // Red button setup
+        //red
         JButton red = new JButton("");
         ImageIcon icone = new ImageIcon("src/Images/Roulette/RouletteButtons/button_red.png");
         red.setIcon(icone);
@@ -202,7 +199,7 @@ public class Components {
         red.setBounds(105, 770, 157, 70);
         panel.add(red);
 
-        // Black button setup
+        //black
         JButton black = new JButton("");
         ImageIcon iconka = new ImageIcon("src/Images/Roulette/RouletteButtons/button_black.png");
         black.setIcon(iconka);
@@ -213,7 +210,7 @@ public class Components {
         black.setBounds(263, 770, 157, 70);
         panel.add(black);
 
-        // Load number buttons from image files
+        //chat
         File folder = new File("src/Images/Roulette/RouletteButtons");
         File[] imageFiles = folder.listFiles((dir, name) -> name.matches("button_\\d+\\.png"));
 
@@ -251,7 +248,7 @@ public class Components {
                 }
             }
         }
-
+    //end of chat
         panel.revalidate();
         panel.repaint();
 

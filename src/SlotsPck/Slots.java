@@ -116,6 +116,7 @@ public class Slots extends JFrame {
             slotlist.put(slot, i);
             mainpanel.add(slot);
         }
+        //
     }
 
     /**

@@ -126,7 +126,7 @@ public class CardDealing {
                 blackJack.totalPlayers > 1 ? blackJack.players[1] : null,
                 blackJack.totalPlayers > 2 ? blackJack.players[2] : null
         );
-        //chat
+        //
         blackJack.updatemoneylabels();
         blackJack.hitbutton.setVisible(false);
         blackJack.staybutton.setVisible(false);

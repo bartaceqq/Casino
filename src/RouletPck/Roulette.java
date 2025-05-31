@@ -184,14 +184,12 @@ public class Roulette extends JFrame {
         panel.setLayout(null);
         this.add(panel);
 
-        // Bet panel setup
         betpanel = new JPanel();
         betpanel.setLayout(null);
         betpanel.setBounds(500, 100, 200, 100);
         panel.add(betpanel);
         betpanel.setVisible(false);
 
-        // Spin button setup
         spinButton.setBounds(650, 700, 200, 100);
         spinButton.setFont(new Font("Arial", Font.BOLD, 20));
         panel.add(spinButton);
@@ -213,22 +211,18 @@ public class Roulette extends JFrame {
                 if (count == 3) {
                     timer.stop();
 
-                    // Output winning number for debug
                     System.out.println("number: " + numbers[counter]);
                     System.out.println("redbet test1: " + redbet);
 
-                    // Calculate money based on black/red bets
                     money = components.blackandredmoneymaker(blackbet, redbet, isblack, numbers[counter], money, panel, Roulette.this);
                     System.out.println(money + " <- penizky");
                     moneylabel.setText("money: " + money);
 
-                    // Check if player bet on the winning number
                     if (bets.containsKey(numbers[counter])) {
                         money += bets.get(numbers[counter]) * 10;  // 10x payout
                         moneylabel.setText("money: " + money);
                     }
 
-                    // Reset bets
                     redbet = 0;
                     blackbet = 0;
                     bets.clear();

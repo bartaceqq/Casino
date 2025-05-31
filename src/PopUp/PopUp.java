@@ -21,26 +21,19 @@ public class PopUp extends JDialog {
      * @param text      The message to display in the dialog.
      * @param blackJack The instance of the BlackJack game to configure based on user input.
      */
+    //this whole class is made by chat bcs i didnt want to bother with it
     public PopUp(JFrame parent, String text, BlackJack blackJack) {
-        super(parent, "POP UP", true); // Modal dialog
-
-        // Create and add the message label, centered
+        super(parent, "POP UP", true);
         JLabel messageLabel = new JLabel(text, SwingConstants.CENTER);
         add(messageLabel, BorderLayout.CENTER);
-
-        // Create a panel to hold player selection buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
-
-        // Add buttons for selecting 1 to 3 players
         for (int i = 1; i <= 3; i++) {
             int playerCount = i;
             JButton button = new JButton(String.valueOf(playerCount));
-
-            // When a button is clicked, set player count in BlackJack and initialize positions
             button.addActionListener(e -> {
                 blackJack.playercount = playerCount;
                 blackJack.setuppositions();
-                dispose(); // Close the dialog
+                dispose();
             });
 
             buttonPanel.add(button);
@@ -52,6 +45,6 @@ public class PopUp extends JDialog {
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         setResizable(false);
-        setVisible(true); // Show dialog immediately
+        setVisible(true);
     }
 }

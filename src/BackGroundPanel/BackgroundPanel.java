@@ -22,12 +22,10 @@ public class BackgroundPanel extends JPanel {
      * @param imagePath the file path to the background image.
      */
     public BackgroundPanel(String imagePath) {
-        // Load the image
         backgroundImage = new ImageIcon(imagePath).getImage();
         if (backgroundImage == null) {
             System.out.println("Background image is null");
         }
-        // Optional: set size of panel to image size
         this.setPreferredSize(new Dimension(backgroundImage.getWidth(null), backgroundImage.getHeight(null)));
     }
 
@@ -39,7 +37,6 @@ public class BackgroundPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Draw the background image
         g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
     }
 }

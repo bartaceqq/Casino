@@ -23,10 +23,10 @@ class SetupCardsTest {
     }
     @Test
     void testGetRankNumber_InvalidInput() {
-        assertEquals(-1, setup.getRankNumber("Z"));    // not a valid card
-        assertEquals(-1, setup.getRankNumber(""));     // empty string
-        assertEquals(-1, setup.getRankNumber("1"));    // 1 is not a valid rank in Blackjack here
-        assertEquals(-1, setup.getRankNumber("joker"));// invalid name
+        assertEquals(-1, setup.getRankNumber("Z"));
+        assertEquals(-1, setup.getRankNumber(""));
+        assertEquals(-1, setup.getRankNumber("1"));
+        assertEquals(-1, setup.getRankNumber("fwfgwq"));
     }
 
     @Test
