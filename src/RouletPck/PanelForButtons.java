@@ -17,10 +17,10 @@ public class PanelForButtons extends JPanel {
      * Constructs a PanelForButtons with the specified image path, position, section (unused),
      * and components reference.
      *
-     * @param imgPath   the file path of the background image
-     * @param x         the x-coordinate for the panel's position
-     * @param y         the y-coordinate for the panel's position
-     * @param section   a string identifier for the section (currently unused)
+     * @param imgPath    the file path of the background image
+     * @param x          the x-coordinate for the panel's position
+     * @param y          the y-coordinate for the panel's position
+     * @param section    a string identifier for the section (currently unused)
      * @param components a Components object associated with this panel
      */
     public PanelForButtons(String imgPath, int x, int y, String section, Components components) {
@@ -50,30 +50,5 @@ public class PanelForButtons extends JPanel {
         }
     }
 
-    /**
-     * Changes the background image of the panel to the image located at the new path.
-     * Automatically repaints the panel to reflect the new image.
-     *
-     * @param newPath the file path of the new background image
-     */
-    public void setImage(String newPath) {
-        this.imgPath = newPath;
-        this.img = new ImageIcon(newPath).getImage();
-        repaint();
-    }
 
-    /**
-     * Moves the panel to a new position on its container.
-     * Updates the bounds and repaints the panel.
-     *
-     * @param newX the new x-coordinate of the panel
-     * @param newY the new y-coordinate of the panel
-     */
-    public void movePanel(int newX, int newY) {
-        this.x = newX;
-        this.y = newY;
-        this.setBounds(x, y, 500, 500);
-        repaint();
-        revalidate();
-    }
 }
