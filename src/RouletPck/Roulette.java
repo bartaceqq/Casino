@@ -240,21 +240,27 @@ public class Roulette extends JFrame {
         addbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                bet += 100;
-                betlabel.setText(String.valueOf(bet));
-                System.out.println("proslo " + bet);
+                if (bet + 100 <= money) {  // Only increase bet if within player's money
+                    bet += 100;
+                    betlabel.setText(String.valueOf(bet));
+                    System.out.println("Increased bet to " + bet);
+                } else {
+                    JOptionPane.showMessageDialog(panel, "You cannot bet more than you have!", "Insufficient Funds", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
     }
 
-    /**
-     * Adds listener to "BET" button to place the bet on the selected number or color.
-     * @param bett The bet button to attach the listener to.
-     */
     public void bettbuttonListener(JButton bett) {
         bett.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (bet > money) {
+                    // Show warning if bet is greater than money
+                    JOptionPane.showMessageDialog(panel, "You cannot bet more than you have!", "Insufficient Funds", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 if (!colorchoose) {
                     if (selectedNumber != -1 && bet > 0) {
                         money -= bet;
@@ -271,13 +277,13 @@ public class Roulette extends JFrame {
                         bets.forEach((num, b) -> System.out.println("Number: " + num + " | Bet: " + b));
                     }
                 } else {
-                    System.out.println("proslo vybyrani berev");
+                    System.out.println("color choose mode");
                     if (isblackie) {
-                        System.out.println("prosla cerna");
+                        System.out.println("Black bet");
                         blackbet = bet;
                         System.out.println(blackbet + " black bet");
                     } else {
-                        System.out.println("prosla cervena");
+                        System.out.println("Red bet");
                         redbet = bet;
                         System.out.println(redbet + " red bet");
                     }
@@ -293,6 +299,7 @@ public class Roulette extends JFrame {
             }
         });
     }
+
 
     /**
      * Adds listener to "-" button to decrease the bet amount.

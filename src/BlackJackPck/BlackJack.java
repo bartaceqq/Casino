@@ -122,7 +122,7 @@ public class BlackJack extends JFrame {
         this.firstrun = firstrun;
         runMainMethod(); // Sets up the JFrame and mainpanel
 
-        new PopUp(this, "How many players are playing?", this);
+        new PopUp(this, "How many players are playing?", this, true);
         moneylabels = buttonSetup.monetlabels(players, totalPlayers, mainpanel);
         updatemoneylabels();
 

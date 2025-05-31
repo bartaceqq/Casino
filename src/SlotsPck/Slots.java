@@ -223,7 +223,7 @@ public class Slots extends JFrame {
                             slot.Spin();
                         }
                     } else {
-                        new PopUp(Slots.this, "U ARE TRYING TO BET MORE THAN YOU HAVE", null);
+                        new PopUp(Slots.this, "U ARE TRYING TO BET MORE THAN YOU HAVE", null, false);
                     }
                 }
             }
